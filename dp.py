@@ -72,7 +72,8 @@ def dp_solver(income, std, surviv_prob, AltDeg):
             savings_incr = savings * (1 + R)
             savings_incr = savings_incr[None].T
 
-            expected_value = exp_val(income_with_tran[:, t+1], np.exp(inc_shk_perm), savings_incr, grid_w, v[0, :], weights)
+            expected_value = exp_val(income_with_tran[:, t+1], np.exp(inc_shk_perm),
+                                     savings_incr, grid_w, v[0, :], weights)
 
             v_array = u_r + DELTA * prob[t] * expected_value    # v_array has size N_C-by-1
             v[1, i] = np.max(v_array)

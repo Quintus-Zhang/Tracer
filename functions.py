@@ -44,7 +44,6 @@ def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight
     :return:
     """
     ev = 0.0
-
     for j in range(3):
         for k in range(3):
             inc = inc_with_shk_tran[j] * exp_inc_shk_perm[k]
