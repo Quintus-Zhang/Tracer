@@ -30,8 +30,10 @@ def dp_solver(income, std, surviv_prob, AltDeg):
     income.set_index('Age', inplace=True)
     income = income.loc[START_AGE:END_AGE]
 
-    sigma_perm_shock = std.loc['sigma_permanent', education_level[AltDeg]]
-    sigma_tran_shock = std.loc['sigma_transitory', education_level[AltDeg]]
+    # sigma_perm_shock = std.loc['sigma_permanent', education_level[AltDeg]]
+    # sigma_tran_shock = std.loc['sigma_transitory', education_level[AltDeg]]
+    sigma_perm_shock = 0
+    sigma_tran_shock = 0
     # inc_shk_perm = lambda t: np.sqrt(2) * np.sqrt(t) * sample_points * sigma_perm_shock
     inc_shk_perm = np.sqrt(2) * sample_points * sigma_perm_shock
     inc_shk_tran = np.sqrt(2) * sample_points * sigma_tran_shock

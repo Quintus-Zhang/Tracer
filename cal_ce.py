@@ -3,26 +3,28 @@ import pandas as pd
 import os
 import numpy as np
 from functions import utility
-from constants import START_AGE, END_AGE, RETIRE_AGE, N_W, UPPER_BOUND_W, N_C, GAMMA, R, DELTA, education_level
+from constants import START_AGE, END_AGE, RETIRE_AGE, N_W, UPPER_BOUND_W, N_C, GAMMA, R, DELTA, education_level, N_SIM, MU
 
 
 # policy functions: C_t(W_t)
 def c_func(c_df, w, age):
     """Given the consumption functions and wealth at certain age, return the corresponding consumption"""
-    w = min(w, c_df.loc[c_df.index[-1], str(END_AGE)])
-    w = max(w, c_df.loc[c_df.index[0], str(END_AGE)])
-    spline = interp1d(c_df[str(END_AGE)], c_df[str(age)], kind='cubic', fill_value='extrapolate')
+    # w = min(w, c_df.loc[c_df.index[-1], str(END_AGE)])
+    # w = max(w, c_df.loc[c_df.index[0], str(END_AGE)])
+    w = np.where(w < c_df.loc[c_df.index[-1], str(END_AGE)], w, c_df.loc[c_df.index[-1], str(END_AGE)])
+    w = np.where(w > c_df.loc[c_df.index[0], str(END_AGE)], w, c_df.loc[c_df.index[0], str(END_AGE)])
+    spline = interp1d(c_df[str(END_AGE)], c_df[str(age)], kind='cubic')
     c = spline(w)
     return c
 
 
-def cal_certainty_equi(income, std, surviv_prob, AltDeg):
+def cal_certainty_equi(income, std, surviv_prob, AltDeg, c_func_dir):
 
     YEARS = END_AGE - START_AGE + 1
 
     # read consumption data
     base_path = os.path.dirname(__file__)
-    consmp_fp = os.path.join(base_path, 'results', 'c_v_2m_income_test', 'consumption_' + education_level[AltDeg] +'.xlsx')
+    consmp_fp = os.path.join(base_path, 'results', c_func_dir, 'consumption_' + education_level[AltDeg] +'.xlsx')
     c_df = pd.read_excel(consmp_fp)
 
     # income
@@ -37,58 +39,118 @@ def cal_certainty_equi(income, std, surviv_prob, AltDeg):
 
     # conditional survival probabilities
     cond_prob = surviv_prob.loc[START_AGE:END_AGE, 'p']
-    prob = cond_prob.cumprod().values[None].T
+    prob = cond_prob.cumprod().values
 
     # discount factor
     delta = np.ones((YEARS, 1)) * DELTA
     delta[0] = 1
-    delta = np.cumprod(delta)[None].T
+    delta = np.cumprod(delta)
 
-    simu = np.zeros((10000, 1))
-    for i in range(10000):
-        print(i)
-        rn_perm = np.random.normal(0, sigma_perm_shock, (RETIRE_AGE - START_AGE + 1, 1))
-        rn_tran = np.random.normal(0, sigma_tran_shock, (RETIRE_AGE - START_AGE + 1, 1)).T
-        rand_walk = np.cumsum(rn_perm)
-        zeros = np.zeros(END_AGE - RETIRE_AGE)
+    rn_perm = np.random.normal(MU, sigma_perm_shock, (N_SIM, RETIRE_AGE - START_AGE + 1))
+    rand_walk = np.cumsum(rn_perm, axis=1)
+    rn_tran = np.random.normal(MU, sigma_tran_shock, (N_SIM, RETIRE_AGE - START_AGE + 1))
 
-        perm = np.append(rand_walk, zeros)
-        tran = np.append(rn_tran, zeros)
+    zeros = np.zeros((N_SIM, END_AGE - RETIRE_AGE))
+    perm = np.append(rand_walk, zeros, axis=1)
+    tran = np.append(rn_tran, zeros, axis=1)
 
-        inc = income['f'].multiply(np.exp(perm) * np.exp(tran))
+    inc = np.multiply(np.exp(perm) * np.exp(tran), income['f'].values)  # inc.shape: (simu_N x 79)
 
-        # calculating the wealth and consumption at each age
-        w = np.zeros((YEARS, 1))
-        c = np.zeros((YEARS, 1))
-        w[0] = 1.1
-        for t in range(YEARS-1):   # t: 0 to 77
-            c[t] = c_func(c_df, w[t], t+START_AGE)
-            w[t+1] = R * (w[t] - c[t]) + inc[t+1]  # income.loc[t+1, 'f']  #
-        c[-1] = c_func(c_df, w[-1], END_AGE)
+    w = np.zeros_like(inc)
+    c = np.zeros_like(inc)
 
-        # if any(np.isnan(c)):
-        #     print('\n')
-        #     print(i)
-        #     print('rn_perm')
-        #     print(rn_perm)
-        #     print('rand_walk')
-        #     print(rand_walk)
-        #     print('np.exp(perm)')
-        #     print(np.exp(perm))
-        #     print('inc')
-        #     print(inc)
-        #     print('wealth')
-        #     print(w)
-        #     print('consumption')
-        #     print(c)
-        #     return
+    w[:, 0] = 1.1
 
-        simu[i, 0] = np.sum((delta * prob * utility(c, GAMMA))[1:])
+    for t in range(YEARS-1):
+        try:
+            c[:, t] = c_func(c_df, w[:, t], t+START_AGE)
+        except:
+            print(w[:, t])
+        w[:, t+1] = R * (w[:, t] - c[:, t]) + inc[:, t+1]
+    c[:, -1] = c_func(c_df, w[:, -1], END_AGE)
 
-    c_ce = -np.sum(delta * prob) / np.mean(simu[:, 0])
-    total_w_ce = np.sum(delta * c_ce)
+    util_c = np.apply_along_axis(utility, 1, c, GAMMA)
+    simu_util = np.sum(np.multiply(util_c, delta * prob)[:, 1:], axis=1)
+
+    c_ce = -np.sum(delta * prob) / np.mean(simu_util)  # TODO prob not right
+    total_w_ce = np.sum(delta * c_ce)                  # TODO change
 
     return c_ce, total_w_ce
+
+
+# def cal_certainty_equi(income, std, surviv_prob, AltDeg):
+#
+#     YEARS = END_AGE - START_AGE + 1
+#
+#     # read consumption data
+#     base_path = os.path.dirname(__file__)
+#     consmp_fp = os.path.join(base_path, 'results', 'c_v_2m_income_test', 'consumption_' + education_level[AltDeg] +'.xlsx')
+#     c_df = pd.read_excel(consmp_fp)
+#
+#     # income
+#     income = income.loc[income['AltDeg'] == AltDeg]
+#     income.set_index('Age', inplace=True)
+#     income = income.loc[START_AGE:END_AGE]
+#     income.reset_index(inplace=True, drop=True)
+#
+#     # variance
+#     sigma_perm_shock = std.loc['sigma_permanent', education_level[AltDeg]]
+#     sigma_tran_shock = std.loc['sigma_transitory', education_level[AltDeg]]
+#
+#     # conditional survival probabilities
+#     cond_prob = surviv_prob.loc[START_AGE:END_AGE, 'p']
+#     prob = cond_prob.cumprod().values[None].T
+#
+#     # discount factor
+#     delta = np.ones((YEARS, 1)) * DELTA
+#     delta[0] = 1
+#     delta = np.cumprod(delta)[None].T
+#
+#     simu = np.zeros((10000, 1))
+#     for i in range(10000):
+#         print(i)
+#         rn_perm = np.random.normal(0, sigma_perm_shock, (RETIRE_AGE - START_AGE + 1, 1))
+#         rn_tran = np.random.normal(0, sigma_tran_shock, (RETIRE_AGE - START_AGE + 1, 1)).T
+#         rand_walk = np.cumsum(rn_perm)
+#         zeros = np.zeros(END_AGE - RETIRE_AGE)
+#
+#         perm = np.append(rand_walk, zeros)
+#         tran = np.append(rn_tran, zeros)
+#
+#         inc = income['f'].multiply(np.exp(perm) * np.exp(tran))
+#
+#         # calculating the wealth and consumption at each age
+#         w = np.zeros((YEARS, 1))
+#         c = np.zeros((YEARS, 1))
+#         w[0] = 1.1
+#         for t in range(YEARS-1):   # t: 0 to 77
+#             c[t] = c_func(c_df, w[t], t+START_AGE)
+#             w[t+1] = R * (w[t] - c[t]) + inc[t+1]  # income.loc[t+1, 'f']  #
+#         c[-1] = c_func(c_df, w[-1], END_AGE)
+#
+#         # if any(np.isnan(c)):
+#         #     print('\n')
+#         #     print(i)
+#         #     print('rn_perm')
+#         #     print(rn_perm)
+#         #     print('rand_walk')
+#         #     print(rand_walk)
+#         #     print('np.exp(perm)')
+#         #     print(np.exp(perm))
+#         #     print('inc')
+#         #     print(inc)
+#         #     print('wealth')
+#         #     print(w)
+#         #     print('consumption')
+#         #     print(c)
+#         #     return
+#
+#         simu[i, 0] = np.sum((delta * prob * utility(c, GAMMA))[1:])
+#
+#     c_ce = -np.sum(delta * prob) / np.mean(simu[:, 0])  # TODO prob not right
+#     total_w_ce = np.sum(delta * c_ce)                   # TODO change
+#
+#     return c_ce, total_w_ce
 
 
 # labor income

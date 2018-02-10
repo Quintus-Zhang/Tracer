@@ -28,7 +28,6 @@ def read_input_data(income_fp, mortal_fp):
     surviv_prob.set_index('AGE', inplace=True)
     surviv_prob.rename(columns={'Pt_Average_P0_22': 'p'}, inplace=True)
 
-
     return income, std, surviv_prob
 
 
