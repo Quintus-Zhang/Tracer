@@ -26,7 +26,7 @@ def read_input_data(income_fp, mortal_fp):
     # conditional survival probabilities
     surviv_prob = pd.read_excel(mortal_fp)
     surviv_prob.set_index('AGE', inplace=True)
-    surviv_prob.rename(columns={'Pt_Average_P0_22': 'p'}, inplace=True)
+    # surviv_prob.rename(columns={'CSP': 'p'}, inplace=True)
 
     return income, std, surviv_prob
 

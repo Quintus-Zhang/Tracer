@@ -38,7 +38,7 @@ def cal_certainty_equi(income, std, surviv_prob, AltDeg, c_func_dir):
     sigma_tran_shock = std.loc['sigma_transitory', education_level[AltDeg]]
 
     # conditional survival probabilities
-    cond_prob = surviv_prob.loc[START_AGE:END_AGE, 'p']
+    cond_prob = surviv_prob.loc[START_AGE:END_AGE, 'CSP']
     prob = cond_prob.cumprod().values
 
     # discount factor
@@ -72,7 +72,7 @@ def cal_certainty_equi(income, std, surviv_prob, AltDeg, c_func_dir):
     util_c = np.apply_along_axis(utility, 1, c, GAMMA)
     simu_util = np.sum(np.multiply(util_c, delta * prob)[:, 1:], axis=1)
 
-    c_ce = -np.sum(delta * prob) / np.mean(simu_util)  # TODO prob not right
+    c_ce = -np.sum(delta * prob) / np.mean(simu_util)
     total_w_ce = np.sum(delta * c_ce)                  # TODO change
 
     return c_ce, total_w_ce

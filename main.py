@@ -10,7 +10,7 @@ start_time = time.time()
 
 # set file path
 income_fn = 'labor_income_process_test.xls'
-surviv_fn = 'MORTALITY-QUANCHENG.xlsx'
+surviv_fn = 'Conditional Survival Prob Feb 16.xlsx'
 base_path = os.path.dirname(__file__)
 income_fp = os.path.join(base_path, 'data', income_fn)
 mortal_fp = os.path.join(base_path, 'data', surviv_fn)
@@ -21,7 +21,7 @@ c_func_dir = 'c_v_2m_income_test'
 income, std, surviv_prob = read_input_data(income_fp, mortal_fp)
 
 # generate comsumption functions
-if False:
+if True:
     for AltDeg in [1, 2, 4]:
         print('#'*30, ' AltDeg: ', AltDeg, ' ', '#'*30)
         dp_solver(income, std, surviv_prob, AltDeg)
