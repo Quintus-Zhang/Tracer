@@ -12,6 +12,7 @@ R = 0.02                  # risk-free rate
 DELTA = 0.99              # discount factor
 MU = 0                    # expectation of income shocks
 N_SIM = 100000            # number of draws
+RET_FRAC = 0.68212        # retirement fraction TODO: what is this?
 
 education_level = {
     1: 'No High School',

@@ -2,11 +2,11 @@ import os
 import numpy as np
 import pandas as pd
 from numpy.polynomial.hermite import hermgauss
-from functions import utility, exp_val
-from constants import START_AGE, END_AGE, N_W, UPPER_BOUND_W, N_C, GAMMA, R, DELTA, education_level
+from functions import utility, exp_val, exp_val_r, cal_income
+from constants import START_AGE, END_AGE, RETIRE_AGE, N_W, UPPER_BOUND_W, N_C, GAMMA, R, DELTA, education_level, RET_FRAC
 
-# test
-def dp_solver(income, std, surviv_prob, AltDeg):
+
+def dp_solver(age_coeff, std, surviv_prob, AltDeg):
     ###########################################################################
     #                                Setup                                    #
     ###########################################################################
@@ -26,9 +26,13 @@ def dp_solver(income, std, surviv_prob, AltDeg):
     prob = surviv_prob.loc[START_AGE:END_AGE-1, 'CSP']  # 22:99
     prob = prob.values
 
-    income = income.loc[income['AltDeg'] == AltDeg]  # 20 to 100
-    income.set_index('Age', inplace=True)
-    income = income.loc[START_AGE:END_AGE]
+    # calculating the income before retirement using the age polynomial
+    coeff_this_group = age_coeff.loc[education_level[AltDeg]]
+    ages = np.arange(START_AGE, RETIRE_AGE+1)      # 22 to 65
+    income = cal_income(coeff_this_group, ages)    # 0:43, 22:65
+
+    # calculating the retirement income, which is a float
+    ret_income = RET_FRAC * income[-1]
 
     sigma_perm_shock = std.loc['sigma_permanent', education_level[AltDeg]]
     sigma_tran_shock = std.loc['sigma_transitory', education_level[AltDeg]]
@@ -37,7 +41,7 @@ def dp_solver(income, std, surviv_prob, AltDeg):
     # inc_shk_perm = lambda t: np.sqrt(2) * np.sqrt(t) * sample_points * sigma_perm_shock
     inc_shk_perm = np.sqrt(2) * sample_points * sigma_perm_shock
     inc_shk_tran = np.sqrt(2) * sample_points * sigma_tran_shock
-    income_with_tran = np.exp(inc_shk_tran) * income['f'].values
+    income_with_tran = np.exp(inc_shk_tran) * income
 
     # construct grids
     grid_w = np.linspace(1, UPPER_BOUND_W, N_W)
@@ -74,8 +78,12 @@ def dp_solver(income, std, surviv_prob, AltDeg):
             savings_incr = savings * (1 + R)
             savings_incr = savings_incr[None].T
 
-            expected_value = exp_val(income_with_tran[:, t+1], np.exp(inc_shk_perm),
-                                     savings_incr, grid_w, v[0, :], weights)
+            # TODO: =
+            if t + 22 >= RETIRE_AGE:
+                expected_value = exp_val_r(ret_income, savings_incr, grid_w, v[0, :])
+            else:
+                expected_value = exp_val(income_with_tran[:, t+1], np.exp(inc_shk_perm),
+                                         savings_incr, grid_w, v[0, :], weights)
 
             v_array = u_r + DELTA * prob[t] * expected_value    # v_array has size N_C-by-1
             v[1, i] = np.max(v_array)

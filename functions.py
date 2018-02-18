@@ -5,18 +5,29 @@ import pandas as pd
 ###########################################################################
 #                              Functions                                  #
 ###########################################################################
+
+
 def utility(values, gamma):
     return values**(1-gamma) / (1-gamma)
 
 
+def cal_income(coeffs, ages):
+    a  = coeffs['a']
+    b1 = coeffs['b1']
+    b2 = coeffs['b2']
+    b3 = coeffs['b3']
+    income = np.exp(a + b1 * ages + b2 * ages**2 + b3 * ages**3)    # 0:43, 22:65
+    return income
+
+
+# TODO: instead of reading income profile, reading the coefficients of age polynomila
 def read_input_data(income_fp, mortal_fp):
-    income_and_var = pd.ExcelFile(income_fp)
-    # labor income process
-    income = pd.read_excel(income_and_var, sheet_name='Income profiles')
-    income.rename(columns={'All Income': 'f'}, inplace=True)
+    age_coeff_and_var = pd.ExcelFile(income_fp)
+    # age coefficients
+    age_coeff = pd.read_excel(age_coeff_and_var, sheet_name='Coefficients')
 
     # decomposed variance
-    std = pd.read_excel(income_and_var, sheet_name='Variance', skiprows=2)
+    std = pd.read_excel(age_coeff_and_var, sheet_name='Variance', skiprows=2)
     std.drop(std.columns[0], axis=1, inplace=True)
     std.drop([1, 3], inplace=True)
     std.index = pd.CategoricalIndex(['sigma_permanent', 'sigma_transitory'])
@@ -24,9 +35,8 @@ def read_input_data(income_fp, mortal_fp):
     # conditional survival probabilities
     cond_prob = pd.read_excel(mortal_fp)
     cond_prob.set_index('AGE', inplace=True)
-    # surviv_prob.rename(columns={'CSP': 'p'}, inplace=True)
 
-    return income, std, cond_prob
+    return age_coeff, std, cond_prob
 
 
 def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight):
@@ -55,4 +65,18 @@ def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight
             temp = weight[j] * weight[k] * v_w
             ev = ev + temp
     ev = ev / np.pi   # quadrature
+    return ev
+
+
+def exp_val_r(inc, savings_incr, grid_w, v):
+    wealth = savings_incr + inc
+
+    wealth[wealth > grid_w[-1]] = grid_w[-1]
+    wealth[wealth < grid_w[0]] = grid_w[0]
+
+    spline = interp1d(grid_w, v, kind='cubic')
+
+    v_w = spline(wealth)
+
+    ev = v_w
     return ev

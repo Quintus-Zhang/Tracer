@@ -9,7 +9,7 @@ from constants import START_AGE, END_AGE, N_W, UPPER_BOUND_W, N_C, GAMMA, R, DEL
 start_time = time.time()
 
 # set file path
-income_fn = 'PostRegressionEstimates_AgeEarnings.xlsx'   # 'labor_income_process_test.xls'
+income_fn = 'age_coefficients_and_var.xlsx'
 surviv_fn = 'Conditional Survival Prob Feb 16.xlsx'
 base_path = os.path.dirname(__file__)
 income_fp = os.path.join(base_path, 'data', income_fn)
@@ -18,20 +18,20 @@ ce_fp = os.path.join(base_path, 'results', 'ce.xlsx')
 # c_func_dir = 'c_v_2m_income_test'
 
 # read data
-income, std, surv_prob = read_input_data(income_fp, mortal_fp)
+age_coeff, std, surv_prob = read_input_data(income_fp, mortal_fp)
 
-# generate comsumption functions
+# generate consumption functions
 if True:
     for AltDeg in [1, 2, 4]:
         print('#'*30, ' AltDeg: ', AltDeg, ' ', '#'*30)
-        dp_solver(income, std, surv_prob, AltDeg)
+        dp_solver(age_coeff, std, surv_prob, AltDeg)
 
-# calculate ce
+# calculate CE
 col_names = ['Consumption CE', 'Total Wealth CE']
 idx_names = education_level.values()
 ce = pd.DataFrame(index=idx_names, columns=col_names)
 for AltDeg in [1, 2, 4]:
-    ce.loc[education_level[AltDeg]] = cal_certainty_equi(income, std, surv_prob, AltDeg)
+    ce.loc[education_level[AltDeg]] = cal_certainty_equi(age_coeff, std, surv_prob, AltDeg)
 
 print(ce)
 ce.to_excel(ce_fp)

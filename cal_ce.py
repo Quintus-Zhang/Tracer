@@ -2,8 +2,8 @@ from scipy.interpolate import interp1d
 import pandas as pd
 import os
 import numpy as np
-from functions import utility
-from constants import START_AGE, END_AGE, RETIRE_AGE, N_W, UPPER_BOUND_W, N_C, GAMMA, R, DELTA, education_level, N_SIM, MU
+from functions import utility, cal_income
+from constants import START_AGE, END_AGE, RETIRE_AGE, N_W, UPPER_BOUND_W, N_C, GAMMA, R, DELTA, education_level, N_SIM, MU, RET_FRAC
 
 
 # policy functions: C_t(W_t)
@@ -24,10 +24,10 @@ def c_func(c_df, w, age):
     return c
 
 
-def cal_certainty_equi(income, std, surviv_prob, AltDeg, c_func_dir=''):
+def cal_certainty_equi(age_coeff, std, surviv_prob, AltDeg, c_func_dir=''):
     """ Calculating the certainty equivalent annual consumption and life time wealth
 
-    :param income: a DataFrame
+    :param age_coeff: a DataFrame
     :param std: a DataFrame
     :param surviv_prob: a DataFrame, conditional survival probability
     :param AltDeg: ID for three education groups, e.g. 1 refers to No high schools
@@ -42,10 +42,14 @@ def cal_certainty_equi(income, std, surviv_prob, AltDeg, c_func_dir=''):
     c_df = pd.read_excel(consmp_fp)
 
     # income
-    income = income.loc[income['AltDeg'] == AltDeg]
-    income.set_index('Age', inplace=True)
-    income = income.loc[START_AGE:END_AGE]
-    income.reset_index(inplace=True, drop=True)
+    coeff_this_group = age_coeff.loc[education_level[AltDeg]]
+    ages = np.arange(START_AGE, RETIRE_AGE+1)      # 22 to 65
+    income_bef_ret = cal_income(coeff_this_group, ages)    # 0:43, 22:65
+
+    ret_income = RET_FRAC * income_bef_ret[-1]
+    ret_income_vec = ret_income * np.ones(END_AGE - RETIRE_AGE)
+
+    income = np.append(income_bef_ret, ret_income_vec)
 
     # variance
     sigma_perm_shock = std.loc['sigma_permanent', education_level[AltDeg]]
@@ -68,7 +72,7 @@ def cal_certainty_equi(income, std, surviv_prob, AltDeg, c_func_dir=''):
     perm = np.append(rand_walk, zeros, axis=1)
     tran = np.append(rn_tran, zeros, axis=1)
 
-    inc = np.multiply(np.exp(perm) * np.exp(tran), income['f'].values)  # inc.shape: (simu_N x 79)
+    inc = np.multiply(np.exp(perm) * np.exp(tran), income)  # inc.shape: (simu_N x 79)
 
     w = np.zeros_like(inc)
     c = np.zeros_like(inc)
