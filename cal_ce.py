@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import numpy as np
 from functions import utility, cal_income
-from constants import START_AGE, END_AGE, RETIRE_AGE, N_W, UPPER_BOUND_W, N_C, GAMMA, R, DELTA, education_level, N_SIM, MU, RET_FRAC
+from constants import START_AGE, END_AGE, RETIRE_AGE, N_W, UPPER_BOUND_W, N_C, GAMMA, R, DELTA, education_level, N_SIM, MU, ret_frac
 
 
 # policy functions: C_t(W_t)
@@ -46,7 +46,7 @@ def cal_certainty_equi(age_coeff, std, surviv_prob, AltDeg, c_func_dir=''):
     ages = np.arange(START_AGE, RETIRE_AGE+1)      # 22 to 65
     income_bef_ret = cal_income(coeff_this_group, ages)    # 0:43, 22:65
 
-    ret_income = RET_FRAC * income_bef_ret[-1]
+    ret_income = ret_frac[AltDeg] * income_bef_ret[-1]
     ret_income_vec = ret_income * np.ones(END_AGE - RETIRE_AGE)
 
     income = np.append(income_bef_ret, ret_income_vec)

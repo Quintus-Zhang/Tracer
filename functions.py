@@ -20,7 +20,6 @@ def cal_income(coeffs, ages):
     return income
 
 
-# TODO: instead of reading income profile, reading the coefficients of age polynomila
 def read_input_data(income_fp, mortal_fp):
     age_coeff_and_var = pd.ExcelFile(income_fp)
     # age coefficients
@@ -40,16 +39,6 @@ def read_input_data(income_fp, mortal_fp):
 
 
 def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight):
-    """
-
-    :param inc_with_shk_tran:
-    :param exp_inc_shk_perm:
-    :param savings_incr:
-    :param grid_w:
-    :param v:
-    :param weight:
-    :return:
-    """
     ev = 0.0
     for j in range(3):
         for k in range(3):
@@ -68,6 +57,7 @@ def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight
     return ev
 
 
+# TODO: prob_li in fortran code ?
 def exp_val_r(inc, savings_incr, grid_w, v):
     wealth = savings_incr + inc
 

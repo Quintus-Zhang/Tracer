@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from numpy.polynomial.hermite import hermgauss
 from functions import utility, exp_val, exp_val_r, cal_income
-from constants import START_AGE, END_AGE, RETIRE_AGE, N_W, UPPER_BOUND_W, N_C, GAMMA, R, DELTA, education_level, RET_FRAC
+from constants import START_AGE, END_AGE, RETIRE_AGE, N_W, UPPER_BOUND_W, N_C, GAMMA, R, DELTA, education_level, ret_frac
 
 
 def dp_solver(age_coeff, std, surviv_prob, AltDeg):
@@ -32,7 +32,7 @@ def dp_solver(age_coeff, std, surviv_prob, AltDeg):
     income = cal_income(coeff_this_group, ages)    # 0:43, 22:65
 
     # calculating the retirement income, which is a float
-    ret_income = RET_FRAC * income[-1]
+    ret_income = ret_frac[AltDeg] * income[-1]
 
     sigma_perm_shock = std.loc['sigma_permanent', education_level[AltDeg]]
     sigma_tran_shock = std.loc['sigma_transitory', education_level[AltDeg]]
