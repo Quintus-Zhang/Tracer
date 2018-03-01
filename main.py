@@ -26,14 +26,14 @@ AltDeg = 4
 
 # calculate income process
 income = cal_income(age_coeff, AltDeg, True)              # labor income only
-income_unempl = cal_income(age_coeff, AltDeg, False)      # with unemployment income
-income_bf_ret = (1 - unempl_rate[AltDeg]) * income + unempl_rate[AltDeg] * income_unempl
-# income_bf_ret = income
+# income_unempl = cal_income(age_coeff, AltDeg, False)      # with unemployment income
+# income_bf_ret = (1 - unempl_rate[AltDeg]) * income + unempl_rate[AltDeg] * income_unempl
+income_bf_ret = income
 income_ret = ret_frac[AltDeg] * income_bf_ret[-1]
 
 # get std
-sigma_perm = std.loc['sigma_permanent', 'Labor Income Only'][education_level[AltDeg]]
-sigma_tran = std.loc['sigma_transitory', 'Labor Income Only'][education_level[AltDeg]]
+sigma_perm = 0  # std.loc['sigma_permanent', 'Labor Income Only'][education_level[AltDeg]]
+sigma_tran = 0  # std.loc['sigma_transitory', 'Labor Income Only'][education_level[AltDeg]]
 
 # get conditional survival probabilities
 cond_prob = surv_prob.loc[START_AGE:END_AGE - 1, 'CSP']  # 22:99
@@ -56,7 +56,9 @@ c_proc = generate_consumption_process(income_bf_ret, income_ret, sigma_perm, sig
 cond_prob = surv_prob.loc[START_AGE:END_AGE, 'CSP']
 prob = cond_prob.cumprod().values
 
-cal_certainty_equi(prob, c_proc)
+c_ce, _ = cal_certainty_equi(prob, c_proc)
+print(c_ce)
+
 
 
 # col_names = ['Consumption CE', 'Total Wealth CE']
@@ -69,7 +71,6 @@ cal_certainty_equi(prob, c_proc)
 # ce.to_excel(ce_fp)
 
 
-
 # os.system('say "your program has finished"')
 print("--- %s seconds ---" % (time.time() - start_time))
 print('AltDeg: ', AltDeg)
@@ -78,28 +79,3 @@ print('transitory shock: ', sigma_tran)
 print('lambda: ', ret_frac[AltDeg])
 print('theta: ',  unemp_frac[AltDeg])
 print('pi: ', unempl_rate[AltDeg])
-
-# 38595.1682359
-# 38102.9842002
-# 39898.36
-# 41234.0051333
-# 38225.7683261
-# 43172.5082731
-# 31249.6863453
-# 37205.6172232
-# 38566.841373
-# 37917.0100687
-# 49192.7250237
-# 37264.7363354
-# 38141.7387077
-
-
-# N_SIM = 100000
-# 39082.0978694
-# 39563.3173585
-# 36972.0998556
-
-
-# N_SIM = 1000000
-# 44375.1833211
-# 33724.913025

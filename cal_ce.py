@@ -52,7 +52,6 @@ def generate_consumption_process(income_bf_ret, income_ret, sigma_perm_shock, si
     w[:, 0] = 0
 
     for t in range(YEARS):
-        print('age: ', t+21)
         try:
             if t == 0:
                 c[:, t] = 0
@@ -81,6 +80,6 @@ def cal_certainty_equi(prob, c):
 
     c_ce = -np.sum(delta * prob) / np.mean(simu_util)
     total_w_ce = prob[:44].sum() * c_ce   # 42.7
-    print(c_ce, ', ', total_w_ce)
+    # print(c_ce, ', ', total_w_ce)
 
-    # return c_ce, total_w_ce
+    return c_ce, total_w_ce

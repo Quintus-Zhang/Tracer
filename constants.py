@@ -4,14 +4,14 @@
 START_AGE = 22            #
 END_AGE = 100             #
 RETIRE_AGE = 65           # retirement age
-N_W = 501
+N_W = 1001
 UPPER_BOUND_W = 3000000   # upper bound of wealth
-N_C = 1501
+N_C = 3001
 GAMMA = 2                 # risk preference parameter
 R = 0.02                  # risk-free rate
 DELTA = 0.99              # discount factor
 MU = 0                    # expectation of income shocks
-N_SIM = 1000000           # number of draws
+N_SIM = 100000           # number of draws
 
 education_level = {
     1: 'No High School',
