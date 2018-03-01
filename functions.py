@@ -1,6 +1,7 @@
 from scipy.interpolate import interp1d
 import numpy as np
 import pandas as pd
+from constants import unemp_frac, education_level, START_AGE, RETIRE_AGE
 
 ###########################################################################
 #                              Functions                                  #
@@ -11,12 +12,19 @@ def utility(values, gamma):
     return values**(1-gamma) / (1-gamma)
 
 
-def cal_income(coeffs, ages):
-    a  = coeffs['a']
-    b1 = coeffs['b1']
-    b2 = coeffs['b2']
-    b3 = coeffs['b3']
-    income = np.exp(a + b1 * ages + b2 * ages**2 + b3 * ages**3)    # 0:43, 22:65
+def cal_income(coeffs, AltDeg, labor_inc_only):
+    coeff_this_group = coeffs.loc[education_level[AltDeg]]
+    a  = coeff_this_group['a']
+    b1 = coeff_this_group['b1']
+    b2 = coeff_this_group['b2']
+    b3 = coeff_this_group['b3']
+
+    ages = np.arange(START_AGE, RETIRE_AGE+1)      # 22 to 65
+
+    if labor_inc_only:
+        income = (a + b1 * ages + b2 * ages**2 + b3 * ages**3)  # 0:43, 22:65
+    else:
+        income = (a + b1 * ages + b2 * ages**2 + b3 * ages**3) * unemp_frac[AltDeg]
     return income
 
 
@@ -26,7 +34,8 @@ def read_input_data(income_fp, mortal_fp):
     age_coeff = pd.read_excel(age_coeff_and_var, sheet_name='Coefficients')
 
     # decomposed variance
-    std = pd.read_excel(age_coeff_and_var, sheet_name='Variance', skiprows=2)
+    std = pd.read_excel(age_coeff_and_var, sheet_name='Variance', header=[1, 2])
+    std.reset_index(inplace=True)
     std.drop(std.columns[0], axis=1, inplace=True)
     std.drop([1, 3], inplace=True)
     std.index = pd.CategoricalIndex(['sigma_permanent', 'sigma_transitory'])
@@ -57,7 +66,6 @@ def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight
     return ev
 
 
-# TODO: prob_li in fortran code ?
 def exp_val_r(inc, savings_incr, grid_w, v):
     wealth = savings_incr + inc
 

@@ -6,39 +6,15 @@ from functions import utility, exp_val, exp_val_r, cal_income
 from constants import START_AGE, END_AGE, RETIRE_AGE, N_W, UPPER_BOUND_W, N_C, GAMMA, R, DELTA, education_level, ret_frac
 
 
-def dp_solver(age_coeff, std, surviv_prob, AltDeg):
+def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, consmp_fp):
     ###########################################################################
     #                                Setup                                    #
     ###########################################################################
-    # set output file path
-    base_path = os.path.dirname(__file__)
-    consmp_fp = os.path.join(base_path, 'results', 'consumption_' + education_level[AltDeg] +'.xlsx')
-    v_fp = os.path.join(base_path, 'results', 'v_' + education_level[AltDeg] + '.xlsx')
-
     # Gauss-Hermite Quadrature
     [sample_points, weights] = hermgauss(3)
     sample_points = sample_points[None].T
     weights = weights[None].T
 
-    ###########################################################################
-    #                                                                         #
-    ###########################################################################
-    prob = surviv_prob.loc[START_AGE:END_AGE-1, 'CSP']  # 22:99
-    prob = prob.values
-
-    # calculating the income before retirement using the age polynomial
-    coeff_this_group = age_coeff.loc[education_level[AltDeg]]
-    ages = np.arange(START_AGE, RETIRE_AGE+1)      # 22 to 65
-    income = cal_income(coeff_this_group, ages)    # 0:43, 22:65
-
-    # calculating the retirement income, which is a float
-    ret_income = ret_frac[AltDeg] * income[-1]
-
-    sigma_perm_shock = std.loc['sigma_permanent', education_level[AltDeg]]
-    sigma_tran_shock = std.loc['sigma_transitory', education_level[AltDeg]]
-    # sigma_perm_shock = 0
-    # sigma_tran_shock = 0
-    # inc_shk_perm = lambda t: np.sqrt(2) * np.sqrt(t) * sample_points * sigma_perm_shock
     inc_shk_perm = np.sqrt(2) * sample_points * sigma_perm_shock
     inc_shk_tran = np.sqrt(2) * sample_points * sigma_tran_shock
     income_with_tran = np.exp(inc_shk_tran) * income
@@ -80,7 +56,7 @@ def dp_solver(age_coeff, std, surviv_prob, AltDeg):
 
             # TODO: =
             if t + 22 >= RETIRE_AGE:
-                expected_value = exp_val_r(ret_income, savings_incr, grid_w, v[0, :])
+                expected_value = exp_val_r(income_ret, savings_incr, grid_w, v[0, :])
             else:
                 expected_value = exp_val(income_with_tran[:, t+1], np.exp(inc_shk_perm),
                                          savings_incr, grid_w, v[0, :], weights)
@@ -99,7 +75,7 @@ def dp_solver(age_coeff, std, surviv_prob, AltDeg):
         c[0, :] = c[1, :]  # useless here
 
     c_collection.to_excel(consmp_fp)
-    v_collection.to_excel(v_fp)
+    # v_collection.to_excel(v_fp)
 
     return
 
