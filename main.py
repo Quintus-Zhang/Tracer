@@ -31,9 +31,9 @@ AltDeg = 4
 #              Setup - income process & std & survival prob               #
 ###########################################################################
 income = cal_income(age_coeff, AltDeg, True)              # labor income only
-income_unempl = cal_income(age_coeff, AltDeg, False)      # with unemployment income
-income_bf_ret = (1 - unempl_rate[AltDeg]) * income + unempl_rate[AltDeg] * income_unempl
-# income_bf_ret = income
+# income_unempl = cal_income(age_coeff, AltDeg, False)      # with unemployment income
+# income_bf_ret = (1 - unempl_rate[AltDeg]) * income + unempl_rate[AltDeg] * income_unempl
+income_bf_ret = income
 # income_bf_ret[:10] *= rho
 income_ret = ret_frac[AltDeg] * income_bf_ret[-1]
 
@@ -50,8 +50,8 @@ cond_prob = cond_prob.values
 #                  DP - generate consumption functions                    #
 ###########################################################################
 c_func_fp = os.path.join(base_path, 'results', 'c function_' + education_level[AltDeg] + '.xlsx')
-if False:
-    dp_solver(income_bf_ret, income_ret, sigma_perm, sigma_tran, cond_prob, c_func_fp)
+if True:
+    dp_solver(income_bf_ret, income_ret, sigma_perm, sigma_tran, cond_prob, unemp_frac[AltDeg], unempl_rate[AltDeg], c_func_fp)
 
 
 ###########################################################################

@@ -6,7 +6,7 @@ from functions import utility, exp_val, exp_val_r, cal_income
 from constants import START_AGE, END_AGE, RETIRE_AGE, N_W, UPPER_BOUND_W, N_C, GAMMA, R, DELTA, education_level, ret_frac
 
 
-def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, consmp_fp):
+def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, theta, pi, consmp_fp):
     ###########################################################################
     #                                Setup                                    #
     ###########################################################################
@@ -15,7 +15,8 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, cons
     sample_points = sample_points[None].T
     weights = weights[None].T
 
-    inc_shk_perm = np.sqrt(2) * sample_points * sigma_perm_shock
+    # inc_shk_perm = np.sqrt(2) * sample_points * sigma_perm_shock
+    inc_shk_perm = lambda t: np.sqrt(2) * np.sqrt(t) * sample_points * sigma_perm_shock
     inc_shk_tran = np.sqrt(2) * sample_points * sigma_tran_shock
     income_with_tran = np.exp(inc_shk_tran) * income
 
@@ -56,10 +57,10 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, cons
 
             # TODO: =
             if t + 22 >= RETIRE_AGE:
-                expected_value = exp_val_r(income_ret, savings_incr, grid_w, v[0, :])
+                expected_value = exp_val_r(income_ret, np.exp(inc_shk_perm(43)), savings_incr, grid_w, v[0, :], weights)
             else:
-                expected_value = exp_val(income_with_tran[:, t+1], np.exp(inc_shk_perm),
-                                         savings_incr, grid_w, v[0, :], weights)
+                expected_value = exp_val(income_with_tran[:, t+1], np.exp(inc_shk_perm(t)),
+                                         savings_incr, grid_w, v[0, :], weights, theta, pi)
 
             v_array = u_r + DELTA * prob[t] * expected_value    # v_array has size N_C-by-1
             v[1, i] = np.max(v_array)

@@ -47,34 +47,42 @@ def read_input_data(income_fp, mortal_fp):
     return age_coeff, std, cond_prob
 
 
-def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight):
+def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight, theta, pi):
+    ev_list = []
+    for unemp_flag in [True, False]:
+        ev = 0.0
+        for j in range(3):
+            for k in range(3):
+                inc = inc_with_shk_tran[j] * exp_inc_shk_perm[k]
+                inc = inc * theta if unemp_flag else inc      # theta
+                wealth = savings_incr + inc
+
+                wealth[wealth > grid_w[-1]] = grid_w[-1]
+                wealth[wealth < grid_w[0]] = grid_w[0]
+
+                spline = interp1d(grid_w, v, kind='cubic')
+
+                v_w = spline(wealth)
+                temp = weight[j] * weight[k] * v_w
+                ev = ev + temp
+        ev = ev / np.pi   # quadrature
+        ev_list.append(ev)
+    ev_all_include = pi * ev_list[0] + (1-pi) * ev_list[1]    # include income risks and unemployment risk
+    return ev_all_include
+
+
+def exp_val_r(inc, exp_inc_shk_perm, savings_incr, grid_w, v, weight):
     ev = 0.0
-    for j in range(3):
-        for k in range(3):
-            inc = inc_with_shk_tran[j] * exp_inc_shk_perm[k]
-            wealth = savings_incr + inc
+    for k in range(3):
+        wealth = savings_incr + inc * exp_inc_shk_perm[k]
 
-            wealth[wealth > grid_w[-1]] = grid_w[-1]
-            wealth[wealth < grid_w[0]] = grid_w[0]
+        wealth[wealth > grid_w[-1]] = grid_w[-1]
+        wealth[wealth < grid_w[0]] = grid_w[0]
 
-            spline = interp1d(grid_w, v, kind='cubic')
+        spline = interp1d(grid_w, v, kind='cubic')
 
-            v_w = spline(wealth)
-            temp = weight[j] * weight[k] * v_w
-            ev = ev + temp
-    ev = ev / np.pi   # quadrature
-    return ev
-
-
-def exp_val_r(inc, savings_incr, grid_w, v):
-    wealth = savings_incr + inc
-
-    wealth[wealth > grid_w[-1]] = grid_w[-1]
-    wealth[wealth < grid_w[0]] = grid_w[0]
-
-    spline = interp1d(grid_w, v, kind='cubic')
-
-    v_w = spline(wealth)
-
-    ev = v_w
+        v_w = spline(wealth)
+        temp = weight[k] * v_w
+        ev = ev + temp
+    ev = ev / np.sqrt(np.pi)
     return ev
