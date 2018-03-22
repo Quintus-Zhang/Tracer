@@ -1,7 +1,7 @@
-from scipy.interpolate import interp1d
+from scipy.interpolate import CubicSpline
 import numpy as np
 import pandas as pd
-from constants import unemp_frac, education_level, START_AGE, RETIRE_AGE
+from constants import unemp_frac, education_level, START_AGE, RETIRE_AGE, rho, ppt, AltDeg, ret_frac
 
 ###########################################################################
 #                              Functions                                  #
@@ -9,10 +9,13 @@ from constants import unemp_frac, education_level, START_AGE, RETIRE_AGE
 
 
 def utility(values, gamma):
-    return values**(1-gamma) / (1-gamma)
+    if gamma == 1:
+        return np.log(values)
+    else:
+        return values**(1-gamma) / (1-gamma)
 
 
-def cal_income(coeffs, AltDeg, labor_inc_only):
+def cal_income(coeffs, AltDeg):
     coeff_this_group = coeffs.loc[education_level[AltDeg]]
     a  = coeff_this_group['a']
     b1 = coeff_this_group['b1']
@@ -21,10 +24,7 @@ def cal_income(coeffs, AltDeg, labor_inc_only):
 
     ages = np.arange(START_AGE, RETIRE_AGE+1)      # 22 to 65
 
-    if labor_inc_only:
-        income = (a + b1 * ages + b2 * ages**2 + b3 * ages**3)  # 0:43, 22:65
-    else:
-        income = (a + b1 * ages + b2 * ages**2 + b3 * ages**3) * unemp_frac[AltDeg]
+    income = (a + b1 * ages + b2 * ages**2 + b3 * ages**3)  # 0:43, 22:65
     return income
 
 
@@ -47,42 +47,53 @@ def read_input_data(income_fp, mortal_fp):
     return age_coeff, std, cond_prob
 
 
-def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight, theta, pi):
+def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight, theta, pi, age, flag):
     ev_list = []
     for unemp_flag in [True, False]:
         ev = 0.0
         for j in range(3):
             for k in range(3):
                 inc = inc_with_shk_tran[j] * exp_inc_shk_perm[k]
-                inc = inc * theta if unemp_flag else inc      # theta
+                inc = inc * theta if unemp_flag else inc         # theta
+
+                if age <= 31:
+                    if flag == 'rho':
+                        inc *= rho
+                    elif flag == 'ppt':
+                        inc -= ppt
+                    else:
+                        pass
+
                 wealth = savings_incr + inc
 
                 wealth[wealth > grid_w[-1]] = grid_w[-1]
                 wealth[wealth < grid_w[0]] = grid_w[0]
 
-                spline = interp1d(grid_w, v, kind='cubic')
+                spline = CubicSpline(grid_w, v, bc_type='natural')
 
                 v_w = spline(wealth)
                 temp = weight[j] * weight[k] * v_w
                 ev = ev + temp
         ev = ev / np.pi   # quadrature
         ev_list.append(ev)
-    ev_all_include = pi * ev_list[0] + (1-pi) * ev_list[1]    # include income risks and unemployment risk
+    ev_all_include = pi * ev_list[0] + (1-pi) * ev_list[1]      # include income risks and unemployment risk
     return ev_all_include
 
 
 def exp_val_r(inc, exp_inc_shk_perm, savings_incr, grid_w, v, weight):
     ev = 0.0
     for k in range(3):
-        wealth = savings_incr + inc * exp_inc_shk_perm[k]
+        wealth = savings_incr + ret_frac[AltDeg] * inc * exp_inc_shk_perm[k]
 
         wealth[wealth > grid_w[-1]] = grid_w[-1]
         wealth[wealth < grid_w[0]] = grid_w[0]
 
-        spline = interp1d(grid_w, v, kind='cubic')
+        spline = CubicSpline(grid_w, v, bc_type='natural')
 
         v_w = spline(wealth)
         temp = weight[k] * v_w
         ev = ev + temp
     ev = ev / np.sqrt(np.pi)
     return ev
+
+
