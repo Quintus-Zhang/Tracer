@@ -5,8 +5,11 @@ START_AGE = 22            #
 END_AGE = 100             #
 RETIRE_AGE = 65           # retirement age
 N_W = 1001
+LOWER_BOUND_W = 1         # lower bound of wealth
 UPPER_BOUND_W = 3000000   # upper bound of wealth
+EXPAND_FAC = 2
 N_C = 3001
+LOWER_BOUND_C = 0
 GAMMA = 2                 # risk preference parameter
 R = 0.02                  # risk-free rate
 DELTA = 0.99              # discount factor
@@ -35,14 +38,14 @@ ret_frac = {
 unemp_frac = {
     1: 0.7891,
     2: 0.7017,
-    4: 1-10**(-5),  # 0.5260,
+    4: 1 # 1-10**(-5),  # 0.5260,
 }
 
 # probability of suffering an unemployed spell (pi)
 unempl_rate = {
     1: 0.2024,
     2: 0.1438,
-    4: 10**(-5),  # 0.0738,
+    4: 0 # 10**(-5),  # 0.0738,
 }
 
 # rho

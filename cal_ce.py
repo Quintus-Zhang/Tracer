@@ -60,33 +60,37 @@ def generate_consumption_process(income_bf_ret, sigma_perm_shock, sigma_tran_sho
 
     inc = np.multiply(inc_with_inc_risk, bern.T)
 
-    # ISA, Loan or origin
-    if flag == 'rho':
-        inc[:, :10] *= rho
-    elif flag == 'ppt':
-        inc[:, :10] -= ppt
-    else:
-        pass
+    # # ISA, Loan or origin
+    # if flag == 'rho':
+    #     inc[:, :10] *= rho
+    # elif flag == 'ppt':
+    #     inc[:, :10] -= ppt
+    # else:
+    #     pass
 
     ###########################################################################
     #                      COH_t+1 = R(COH_t - C_t) + Y_t+1                   #
     #                       wealth = R(COH_t - C_t)                           #
     ###########################################################################
 
-    cash_on_hand = np.zeros((N_SIM, 79))
-    c = np.zeros((N_SIM, 79))
+    cash_on_hand = np.zeros((N_SIM, YEARS))
+    c = np.zeros((N_SIM, YEARS))
 
     cash_on_hand[:, 0] = INIT_WEALTH + inc[:, 0]   # cash on hand at age 22
 
     # 0-77, calculate consumption from 22 to 99, cash on hand from 23 to 100
-    for t in range(78):
+    for t in range(YEARS - 1):
         c[:, t] = c_func(c_func_df, cash_on_hand[:, t], t + START_AGE)
-        cash_on_hand[:, t+1] = R * (cash_on_hand[:, t] - c[:, t]) + inc[:, t+1]  # 1-78
+        cash_on_hand[:, t+1] = (1 + R) * (cash_on_hand[:, t] - c[:, t]) + inc[:, t+1]  # 1-78
     c[:, -1] = c_func(c_func_df, cash_on_hand[:, -1], END_AGE)   # consumption at age 100
 
-    import matplotlib.pyplot as plt
-    plt.plot(cash_on_hand.mean(axis=0))
-    plt.plot(c.mean(axis=0))
+    plt.plot(cash_on_hand.mean(axis=0), label='cash-on-hand')
+    plt.plot(c.mean(axis=0), label='consumption')
+    plt.title('Average Cash-on-hand and Consumption over the life cycle\n UPPER_BOUND_W = 3,000,000')
+    plt.xlabel('Age')
+    plt.ylabel('Dollar')
+    plt.legend()
+    plt.grid()
     plt.show()
 
     # c_process_df = pd.DataFrame(c)

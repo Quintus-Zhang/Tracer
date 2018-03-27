@@ -33,20 +33,19 @@ income_ret = income_bf_ret[-1]
 # get std
 sigma_perm = std.loc['sigma_permanent', 'Labor Income Only'][education_level[AltDeg]]
 sigma_tran = std.loc['sigma_transitory', 'Labor Income Only'][education_level[AltDeg]]
-sigma_perm = 0
-sigma_tran = 0
+# sigma_perm = 0
+# sigma_perm = 0
 
 # get conditional survival probabilities
 cond_prob = surv_prob.loc[START_AGE:END_AGE - 1, 'CSP']  # 22:99
 cond_prob = cond_prob.values
 
-
 ###########################################################################
 #                  DP - generate consumption functions                    #
 ###########################################################################
-c_func_fp = os.path.join(base_path, 'results', 'c function_' + education_level[AltDeg] + '.xlsx')
-# c_func_fp = os.path.join(base_path, 'results', 'gamma2_orig.xlsx')
+# c_func_fp = os.path.join(base_path, 'results', 'c function_' + education_level[AltDeg] + '.xlsx')
 v_func_fp = os.path.join(base_path, 'results', 'v function_' + education_level[AltDeg] + '.xlsx')
+c_func_fp = os.path.join(base_path, 'results', 'c_orig_2_grid_cw.xlsx')
 if run_dp:
     dp_solver(income_bf_ret, income_ret, sigma_perm, sigma_tran, cond_prob, unemp_frac[AltDeg], unempl_rate[AltDeg], flag, c_func_fp, v_func_fp)
 
@@ -56,16 +55,22 @@ if run_dp:
 ###########################################################################
 # c_proc_fp = os.path.join(base_path, 'results', 'c process_' + education_level[AltDeg] + '.xlsx')
 c_func_df = pd.read_excel(c_func_fp)
-c_proc = generate_consumption_process(income_bf_ret, sigma_perm, sigma_tran, c_func_df, AltDeg, flag)
 
-# c_proc_fp = os.path.join(base_path, 'results', 'c process_College Graduates_Labor Income Only.xlsx')
-# c_proc = pd.read_excel(c_proc_fp, header=0)
+c_ce_list = []
+for i in range(1):
+    c_proc = generate_consumption_process(income_bf_ret, sigma_perm, sigma_tran, c_func_df, AltDeg, flag)
 
-cond_prob = surv_prob.loc[START_AGE:END_AGE, 'CSP']
-prob = cond_prob.cumprod().values
+    # c_proc_fp = os.path.join(base_path, 'results', 'c process_College Graduates_Labor Income Only.xlsx')
+    # c_proc = pd.read_excel(c_proc_fp, header=0)
 
-c_ce, _ = cal_certainty_equi(prob, c_proc)
-print(c_ce)
+    cond_prob = surv_prob.loc[START_AGE:END_AGE, 'CSP']
+    prob = cond_prob.cumprod().values
+
+    c_ce, _ = cal_certainty_equi(prob, c_proc)
+    c_ce_list.append(c_ce)
+    print(c_ce)
+print('Mean:', sum(c_ce_list) / 1)
+
 
 # col_names = ['Consumption CE', 'Total Wealth CE']
 # idx_names = education_level.values()
