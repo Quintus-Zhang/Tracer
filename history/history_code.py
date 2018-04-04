@@ -38,3 +38,18 @@
 # tran = np.append(rn_tran, zeros, axis=1)
 #
 # inc_with_inc_risk = np.multiply(np.exp(perm) * np.exp(tran), income)  # inc.shape: (simu_N x 79)
+
+
+
+
+# # CE output
+# ce_fp = os.path.join(base_path, 'results', 'ce.xlsx')
+#
+# col_names = ['Consumption CE', 'Total Wealth CE']
+# idx_names = education_level.values()
+# ce = pd.DataFrame(index=idx_names, columns=col_names)
+# for AltDeg in [4]:
+#     ce.loc[education_level[AltDeg]] = cal_certainty_equi(age_coeff, std, surv_prob, AltDeg)
+#
+# print(ce)
+# ce.to_excel(ce_fp)

@@ -6,8 +6,8 @@ END_AGE = 100             #
 RETIRE_AGE = 65           # retirement age
 N_W = 1001
 LOWER_BOUND_W = 1         # lower bound of wealth
-UPPER_BOUND_W = 3000000   # upper bound of wealth
-EXPAND_FAC = 2
+UPPER_BOUND_W = 15000000    # upper bound of wealth
+EXPAND_FAC = 3
 N_C = 3001
 LOWER_BOUND_C = 0
 GAMMA = 2                 # risk preference parameter
@@ -18,8 +18,9 @@ N_SIM = 100000            # number of draws
 INIT_WEALTH = 0
 
 AltDeg = 4
-flag = 'orig'  #, 'orig' 'rho'  # 'ppt'
+flag = 'ppt'  #, 'orig' 'rho'  # 'ppt'
 run_dp = False
+N = 40
 
 education_level = {
     1: 'No High School',
@@ -38,18 +39,20 @@ ret_frac = {
 unemp_frac = {
     1: 0.7891,
     2: 0.7017,
-    4: 1 # 1-10**(-5),  # 0.5260,
+    4: 0.5260 # 1-10**(-5),  # 0.5260,
 }
 
 # probability of suffering an unemployed spell (pi)
 unempl_rate = {
     1: 0.2024,
     2: 0.1438,
-    4: 0 # 10**(-5),  # 0.0738,
+    4: 0.0738 # 10**(-5),  # 0.0738,
 }
 
 # rho
-rho = 0.900796641891997
+# rho = 0.900796641891997
+rho = 0.931001221
+TERM = 10
 
 # ppt
 ppt = 3483.25

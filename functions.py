@@ -1,7 +1,7 @@
 from scipy.interpolate import CubicSpline
 import numpy as np
 import pandas as pd
-from constants import unemp_frac, education_level, START_AGE, RETIRE_AGE, rho, ppt, AltDeg, ret_frac
+from constants import *
 
 ###########################################################################
 #                              Functions                                  #
@@ -15,7 +15,7 @@ def utility(values, gamma):
         return values**(1-gamma) / (1-gamma)
 
 
-def cal_income(coeffs, AltDeg):
+def cal_income(coeffs):
     coeff_this_group = coeffs.loc[education_level[AltDeg]]
     a  = coeff_this_group['a']
     b1 = coeff_this_group['b1']
@@ -47,61 +47,61 @@ def read_input_data(income_fp, mortal_fp):
     return age_coeff, std, cond_prob
 
 
-def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight, theta, pi, age, flag):
-    ev = 0.0
-    for j in range(3):
-        for k in range(3):
-            inc = inc_with_shk_tran[j] * exp_inc_shk_perm[k]
-
-            wealth = savings_incr + inc
-
-            wealth[wealth > grid_w[-1]] = grid_w[-1]
-            wealth[wealth < grid_w[0]] = grid_w[0]
-
-            spline = CubicSpline(grid_w, v, bc_type='natural')  # minimum curvature in both ends
-
-            v_w = spline(wealth)
-            temp = weight[j] * weight[k] * v_w
-            ev = ev + temp
-    ev = ev / np.pi   # quadrature
-    return ev
-
-    # ev_list = []
-    # for unemp_flag in [True, False]:
-    #     ev = 0.0
-    #     for j in range(3):
-    #         for k in range(3):
-    #             inc = inc_with_shk_tran[j] * exp_inc_shk_perm[k]
-    #             inc = inc * theta if unemp_flag else inc         # theta
+def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight, age, flag):
+    # ev = 0.0
+    # for j in range(3):
+    #     for k in range(3):
+    #         inc = inc_with_shk_tran[j] * exp_inc_shk_perm[k]
     #
-    #             if age <= 31:
-    #                 if flag == 'rho':
-    #                     inc *= rho
-    #                 elif flag == 'ppt':
-    #                     inc -= ppt
-    #                 else:
-    #                     pass
+    #         wealth = savings_incr + inc
     #
-    #             wealth = savings_incr + inc
+    #         wealth[wealth > grid_w[-1]] = grid_w[-1]
+    #         wealth[wealth < grid_w[0]] = grid_w[0]
     #
-    #             wealth[wealth > grid_w[-1]] = grid_w[-1]
-    #             wealth[wealth < grid_w[0]] = grid_w[0]
+    #         spline = CubicSpline(grid_w, v, bc_type='natural')  # minimum curvature in both ends
     #
-    #             spline = CubicSpline(grid_w, v, bc_type='natural')  # minimum curvature in both ends
-    #
-    #             v_w = spline(wealth)
-    #             temp = weight[j] * weight[k] * v_w
-    #             ev = ev + temp
-    #     ev = ev / np.pi   # quadrature
-    #     ev_list.append(ev)
-    # ev_all_include = pi * ev_list[0] + (1-pi) * ev_list[1]      # include income risks and unemployment risk
-    # return ev_all_include
+    #         v_w = spline(wealth)
+    #         temp = weight[j] * weight[k] * v_w
+    #         ev = ev + temp
+    # ev = ev / np.pi   # quadrature
+    # return ev
+
+    ev_list = []
+    for unemp_flag in [True, False]:
+        ev = 0.0
+        for j in range(3):
+            for k in range(3):
+                inc = inc_with_shk_tran[j] * exp_inc_shk_perm[k]
+                inc = inc * unemp_frac[AltDeg] if unemp_flag else inc         # theta
+
+                if age < START_AGE + TERM:
+                    if flag == 'rho':
+                        inc *= rho
+                    elif flag == 'ppt':
+                        inc -= ppt
+                    else:
+                        pass
+
+                wealth = savings_incr + inc
+
+                wealth[wealth > grid_w[-1]] = grid_w[-1]
+                wealth[wealth < grid_w[0]] = grid_w[0]
+
+                spline = CubicSpline(grid_w, v, bc_type='natural')  # minimum curvature in both ends
+
+                v_w = spline(wealth)
+                temp = weight[j] * weight[k] * v_w
+                ev = ev + temp
+        ev = ev / np.pi   # quadrature
+        ev_list.append(ev)
+    ev_all_include = unempl_rate[AltDeg] * ev_list[0] + (1 - unempl_rate[AltDeg]) * ev_list[1]      # include income risks and unemployment risk
+    return ev_all_include
 
 
 def exp_val_r(inc, exp_inc_shk_perm, savings_incr, grid_w, v, weight):
     ev = 0.0
     for k in range(3):
-        wealth = savings_incr + inc * exp_inc_shk_perm[k]
+        wealth = savings_incr + inc * exp_inc_shk_perm[k] * ret_frac[AltDeg]
 
         wealth[wealth > grid_w[-1]] = grid_w[-1]
         wealth[wealth < grid_w[0]] = grid_w[0]
