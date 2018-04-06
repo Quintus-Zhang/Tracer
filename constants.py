@@ -10,7 +10,7 @@ UPPER_BOUND_W = 15000000    # upper bound of wealth
 EXPAND_FAC = 3
 N_C = 3001
 LOWER_BOUND_C = 0
-GAMMA = 2                 # risk preference parameter
+GAMMA = 4                 # risk preference parameter
 R = 0.02                  # risk-free rate
 DELTA = 0.99              # discount factor
 MU = 0                    # expectation of income shocks
@@ -19,8 +19,8 @@ INIT_WEALTH = 0
 
 AltDeg = 4
 flag = 'ppt'  #, 'orig' 'rho'  # 'ppt'
-run_dp = False
-N = 40
+run_dp = True
+N = 1
 
 education_level = {
     1: 'No High School',
@@ -55,4 +55,4 @@ rho = 0.931001221
 TERM = 10
 
 # ppt
-ppt = 3483.25
+ppt = 10031.76 # 3483.25

@@ -60,6 +60,7 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
 
             if t + START_AGE >= RETIRE_AGE:
                 expected_value = exp_val_r(income_ret, np.exp(inc_shk_perm(RETIRE_AGE-START_AGE+1)), savings_incr, grid_w, v[0, :], weights)
+                # expected_value = exp_val_r(income_ret, savings_incr, grid_w, v[0, :])
             else:
                 expected_value = exp_val(income_with_tran[:, t+1], np.exp(inc_shk_perm(t+1)),
                                          savings_incr, grid_w, v[0, :], weights, t+START_AGE, flag)  # using Y_t+1 !

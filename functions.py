@@ -115,3 +115,16 @@ def exp_val_r(inc, exp_inc_shk_perm, savings_incr, grid_w, v, weight):
     return ev
 
 
+# def exp_val_r(inc, savings_incr, grid_w, v):
+#     wealth = savings_incr + inc
+#
+#     wealth[wealth > grid_w[-1]] = grid_w[-1]
+#     wealth[wealth < grid_w[0]] = grid_w[0]
+#
+#     spline = CubicSpline(grid_w, v, bc_type='natural')
+#
+#     v_w = spline(wealth)
+#
+#     ev = v_w
+#     return ev
+

@@ -52,7 +52,7 @@ if run_dp:
     c_func_df.to_excel(c_func_fp)
     # v.to_excel(v_func_fp)
 else:
-    c_func_fp = os.path.join(base_path, 'results', 'Iteration_2.xlsx')
+    c_func_fp = os.path.join(base_path, 'results', 'Iteration_8.xlsx')
     c_func_df = pd.read_excel(c_func_fp)
 
 
@@ -69,8 +69,8 @@ for i in range(N):
     # c_proc = pd.DataFrame(c_proc)
     # c_proc.to_excel(c_proc_fp, index=False)
 
-    # inc = pd.DataFrame(inc)
-    # inc.to_excel(inc_proc_fp, index=False)
+    inc = pd.DataFrame(inc)
+    inc.to_excel(inc_proc_fp, index=False)
 
     # plt.figure()
     # plt.plot(c_proc[:100, :])
