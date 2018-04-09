@@ -4,13 +4,13 @@
 START_AGE = 22            #
 END_AGE = 100             #
 RETIRE_AGE = 65           # retirement age
-N_W = 1001
+N_W = 501
 LOWER_BOUND_W = 1         # lower bound of wealth
 UPPER_BOUND_W = 15000000    # upper bound of wealth
 EXPAND_FAC = 3
-N_C = 3001
+N_C = 1501
 LOWER_BOUND_C = 0
-GAMMA = 4                 # risk preference parameter
+GAMMA = 2                 # risk preference parameter
 R = 0.02                  # risk-free rate
 DELTA = 0.99              # discount factor
 MU = 0                    # expectation of income shocks
@@ -18,9 +18,9 @@ N_SIM = 100000            # number of draws
 INIT_WEALTH = 0
 
 AltDeg = 4
-flag = 'ppt'  #, 'orig' 'rho'  # 'ppt'
+flag = 'orig'  #, 'orig' 'rho'  # 'ppt'
 run_dp = True
-N = 1
+N = 10
 
 education_level = {
     1: 'No High School',

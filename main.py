@@ -69,8 +69,8 @@ for i in range(N):
     # c_proc = pd.DataFrame(c_proc)
     # c_proc.to_excel(c_proc_fp, index=False)
 
-    inc = pd.DataFrame(inc)
-    inc.to_excel(inc_proc_fp, index=False)
+    # inc = pd.DataFrame(inc)
+    # inc.to_excel(inc_proc_fp, index=False)
 
     # plt.figure()
     # plt.plot(c_proc[:100, :])
