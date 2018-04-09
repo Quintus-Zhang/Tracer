@@ -1,4 +1,4 @@
-from scipy.interpolate import CubicSpline
+from scipy.interpolate import interp2d
 import numpy as np
 import pandas as pd
 from constants import *
@@ -47,7 +47,7 @@ def read_input_data(income_fp, mortal_fp):
     return age_coeff, std, cond_prob
 
 
-def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight, age, flag):
+def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, debt, grid_w, grid_d, v, weight, age, flag):
     # ev = 0.0
     # for j in range(3):
     #     for k in range(3):
@@ -87,9 +87,9 @@ def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight
                 wealth[wealth > grid_w[-1]] = grid_w[-1]
                 wealth[wealth < grid_w[0]] = grid_w[0]
 
-                spline = CubicSpline(grid_w, v, bc_type='natural')  # minimum curvature in both ends
+                spline = interp2d(grid_w, grid_d, v, kind='cubic')  # minimum curvature in both ends
 
-                v_w = spline(wealth)
+                v_w = spline(wealth, debt)
                 temp = weight[j] * weight[k] * v_w
                 ev = ev + temp
         ev = ev / np.pi   # quadrature
@@ -98,7 +98,7 @@ def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight
     return ev_all_include
 
 
-def exp_val_r(inc, exp_inc_shk_perm, savings_incr, grid_w, v, weight):
+def exp_val_r(inc, exp_inc_shk_perm, savings_incr, debt, grid_w, grid_d, v, weight):
     ev = 0.0
     for k in range(3):
         wealth = savings_incr + inc * exp_inc_shk_perm[k] * ret_frac[AltDeg]
@@ -106,25 +106,10 @@ def exp_val_r(inc, exp_inc_shk_perm, savings_incr, grid_w, v, weight):
         wealth[wealth > grid_w[-1]] = grid_w[-1]
         wealth[wealth < grid_w[0]] = grid_w[0]
 
-        spline = CubicSpline(grid_w, v, bc_type='natural')
+        spline = interp2d(grid_w, grid_d, v, kind='cubic')  # minimum curvature in both ends
 
-        v_w = spline(wealth)
+        v_w = spline(wealth, debt)
         temp = weight[k] * v_w
         ev = ev + temp
     ev = ev / np.sqrt(np.pi)
     return ev
-
-
-# def exp_val_r(inc, savings_incr, grid_w, v):
-#     wealth = savings_incr + inc
-#
-#     wealth[wealth > grid_w[-1]] = grid_w[-1]
-#     wealth[wealth < grid_w[0]] = grid_w[0]
-#
-#     spline = CubicSpline(grid_w, v, bc_type='natural')
-#
-#     v_w = spline(wealth)
-#
-#     ev = v_w
-#     return ev
-

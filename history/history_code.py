@@ -53,3 +53,36 @@
 #
 # print(ce)
 # ce.to_excel(ce_fp)
+
+
+
+# # inner for-loop
+# for i in range(N_W):
+#
+#     consmp = np.linspace(0, grid_w[i], N_C)
+#     u_r = utility(consmp, GAMMA)
+#     u_r = u_r[None].T
+#
+#     savings = grid_w[i] - np.linspace(0, grid_w[i], N_C)
+#     savings_incr = savings * (1 + R)
+#     savings_incr = savings_incr[None].T
+#
+#     if t + START_AGE >= RETIRE_AGE:
+#         expected_value = exp_val_r(income_ret, np.exp(inc_shk_perm(RETIRE_AGE - START_AGE + 1)), savings_incr, grid_w,
+#                                    v[0, :], weights)
+#     else:
+#         expected_value = exp_val(income_with_tran[:, t + 1], np.exp(inc_shk_perm(t + 1)),
+#                                  savings_incr, grid_w, v[0, :], weights, t + START_AGE, flag)  # using Y_t+1 !
+#
+#     v_array = u_r + DELTA * prob[t] * expected_value  # v_array has size N_C-by-1
+#     v[1, i] = np.max(v_array)
+#     pos = np.argmax(v_array)
+#     c[1, i] = consmp[pos]
+#
+# # dump consumption array and value function array
+# c_collection[str(t + START_AGE)] = c[1, :]
+# v_collection[str(t + START_AGE)] = v[1, :]
+#
+# # change v & c for calculation next stage
+# v[0, :] = v[1, :]
+# c[0, :] = c[1, :]  # useless here
