@@ -23,7 +23,8 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
     # construct grids
     even_grid = np.linspace(0, 1, N_W)
     grid_w = LOWER_BOUND_W + (UPPER_BOUND_W - LOWER_BOUND_W) * even_grid**EXPAND_FAC
-    grid_d = np.linspace(1, UPPER_BOUND_D, N_D)
+    even_grid = np.linspace(0, 1, N_D)
+    grid_d = LOWER_BOUND_D + (UPPER_BOUND_D - LOWER_BOUND_D) * even_grid**EXPAND_FAC
 
     # initialize arrays for value function, consumption and payment
     v = np.zeros((N_D, N_W))
@@ -36,7 +37,7 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
     ut = utility(grid_w, GAMMA)
     v[:] = ut
     c[:] = grid_w
-    repayment[:] = grid_d
+    repayment[:] = grid_d[None].T
 
     # # collect results
     # col_names = [str(age + START_AGE) for age in range(END_AGE-START_AGE, -1, -1)]     # 100 to 22
@@ -51,15 +52,9 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
     for t in range(END_AGE-START_AGE-1, -1, -1):       # t: 77 to 0 / t+22: 99 to 22
         print('############ Age: ', t+START_AGE, '#############')
 
-
-        # for i in range(N_W):
-        #
-        #     payment = np.linspace(0, min(DEBT, grid_w[i]), N_payment)
-        #     consmp = np.linspace(0, grid_w[i] - p)
-
         for i in range(N_W):
             for j in range(N_D):
-                repymt = np.linspace(0, min(grid_d[j], grid_w[i]), N_P)
+                repymt = np.linspace(0, min(grid_d[j], grid_w[i]), N_P)  # TODO:
                 consmp = np.zeros((N_P, N_C))
                 for k in range(len(repymt)):
                     consmp[k, :] = np.linspace(0, grid_w[i] - repymt[k], N_C)
@@ -79,7 +74,7 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
 
                 if t + START_AGE >= RETIRE_AGE:
                     expected_value = exp_val_r(income_ret, np.exp(inc_shk_perm(RETIRE_AGE-START_AGE+1)),
-                                               savings_incr, debt, grid_w, grid_d, v[0, :], weights)
+                                               savings_incr, debt, grid_w, grid_d, v, weights)
                 else:
                     expected_value = exp_val(income_with_tran[:, t+1], np.exp(inc_shk_perm(t+1)),
                                              savings_incr, debt, grid_w, grid_d, v, weights, t+START_AGE, flag)  # using Y_t+1 !

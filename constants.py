@@ -4,13 +4,13 @@
 START_AGE = 22            #
 END_AGE = 100             #
 RETIRE_AGE = 65           # retirement age
-N_W = 1001
+N_W = 501
 LOWER_BOUND_W = 1         # lower bound of wealth
 UPPER_BOUND_W = 15000000    # upper bound of wealth
 EXPAND_FAC = 3
-N_C = 3001
+N_C = 1001
 LOWER_BOUND_C = 0
-GAMMA = 4                 # risk preference parameter
+GAMMA = 2                 # risk preference parameter
 R = 0.02                  # risk-free rate
 DELTA = 0.99              # discount factor
 MU = 0                    # expectation of income shocks
@@ -58,8 +58,9 @@ TERM = 10
 ppt = 10031.76 # 3483.25
 
 ####################################################
-N_D = 1001
+N_D = 51
+LOWER_BOUND_D = 1
 UPPER_BOUND_D = 25000
-N_P = 2001
+N_P = 101
 
 I = 0.07
