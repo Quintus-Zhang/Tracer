@@ -115,7 +115,7 @@ def exp_val_r(inc, exp_inc_shk_perm, savings_incr, debt, grid_w, grid_d, v, weig
         # plt.scatter(debt, wealth)
         # plt.show()
 
-        v_w = spline(wealth[:10000], debt[:10000])
+        v_w = spline(wealth, debt)
 
         # fig = plt.figure()
         # ax = fig.add_subplot(111, projection='3d')
