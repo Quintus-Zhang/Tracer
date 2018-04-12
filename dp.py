@@ -24,7 +24,7 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
     even_grid = np.linspace(0, 1, N_W)
     grid_w = LOWER_BOUND_W + (UPPER_BOUND_W - LOWER_BOUND_W) * even_grid**EXPAND_FAC
     even_grid = np.linspace(0, 1, N_D)
-    grid_d = LOWER_BOUND_D + (UPPER_BOUND_D - LOWER_BOUND_D) * even_grid**EXPAND_FAC
+    grid_d = LOWER_BOUND_D + (UPPER_BOUND_D - LOWER_BOUND_D) * even_grid**EXPAND_FAC  # grid of debt
 
     # initialize arrays for value function, consumption and payment
     v = np.zeros((N_D, N_W))

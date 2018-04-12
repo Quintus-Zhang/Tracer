@@ -18,7 +18,7 @@ N_SIM = 100000            # number of draws
 INIT_WEALTH = 0
 
 AltDeg = 4
-flag = 'ppt'  #, 'orig' 'rho'  # 'ppt'
+flag = 'orig'  #, 'orig' 'rho'  # 'ppt'
 run_dp = True
 N = 1
 
