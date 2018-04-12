@@ -62,7 +62,7 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
                 u_r = np.apply_along_axis(utility, 1, consmp, GAMMA)
                 u_r = u_r.flatten()
 
-                savings = consmp[:, -1][None].T - consmp  #
+                savings = consmp[:, -1][None].T - consmp  # the last column in the consmp is the leftover wealth
                 savings_incr = savings * (1 + R)
                 savings_incr = savings_incr.flatten()
 
@@ -79,12 +79,12 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
                     expected_value = exp_val(income_with_tran[:, t+1], np.exp(inc_shk_perm(t+1)),
                                              savings_incr, debt, grid_w, grid_d, v, weights, t+START_AGE, flag)  # using Y_t+1 !
 
-                v_array = u_r + DELTA * prob[t] * expected_value    # v_array has size (1, N_P * N_C)
-                v_array = v_array.reshape(N_P, N_C)
+                v_array = u_r + DELTA * prob[t] * expected_value    # v_array has size (N_P * N_C, N_P * N_C)
+                # v_array = v_array.reshape(N_P, N_C)
                 v_proxy[j, i] = np.max(v_array)
-                pos = np.unravel_index(np.argmax(v_array, axis=None), v_array.shape)
-                c_proxy[j, i] = consmp[pos[1]]
-                repayment[j, i] = repymt[pos[0]]
+                row, col = np.unravel_index(np.argmax(v_array, axis=None), v_array.shape)
+                c_proxy[j, i] = consmp[col // N_P]
+                repayment[j, i] = repymt[row // N_C]  #
 
         # # dump consumption array and value function array
         # c_collection[str(t + START_AGE)] = c[1, :]

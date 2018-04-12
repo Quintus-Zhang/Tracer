@@ -2,6 +2,10 @@ from scipy.interpolate import interp2d, RectBivariateSpline
 import numpy as np
 import pandas as pd
 from constants import *
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+
 
 ###########################################################################
 #                              Functions                                  #
@@ -108,7 +112,17 @@ def exp_val_r(inc, exp_inc_shk_perm, savings_incr, debt, grid_w, grid_d, v, weig
 
         spline = interp2d(grid_w, grid_d, v, kind='cubic')  # minimum curvature in both ends
 
-        v_w = spline(wealth, debt)
+        # plt.scatter(debt, wealth)
+        # plt.show()
+
+        v_w = spline(wealth[:10000], debt[:10000])
+
+        # fig = plt.figure()
+        # ax = fig.add_subplot(111, projection='3d')
+        # x, y = np.meshgrid(wealth[:1000], debt[:1000])
+        # ax.scatter(x, y, v_w)
+        # plt.show()
+
         temp = weight[k] * v_w
         ev = ev + temp
     ev = ev / np.sqrt(np.pi)
