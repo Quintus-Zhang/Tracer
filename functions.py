@@ -91,9 +91,11 @@ def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, debt, grid_w, gri
                 wealth[wealth > grid_w[-1]] = grid_w[-1]
                 wealth[wealth < grid_w[0]] = grid_w[0]
 
-                spline = interp2d(grid_w, grid_d, v, kind='cubic')  # minimum curvature in both ends
+                # spline = interp2d(grid_w, grid_d, v, kind='cubic')  # minimum curvature in both ends
+                spline = RectBivariateSpline(grid_w, grid_d, v.T)
 
-                v_w = spline(wealth, debt)
+                v_w = spline.ev(wealth, debt)
+
                 temp = weight[j] * weight[k] * v_w
                 ev = ev + temp
         ev = ev / np.pi   # quadrature
@@ -110,12 +112,13 @@ def exp_val_r(inc, exp_inc_shk_perm, savings_incr, debt, grid_w, grid_d, v, weig
         wealth[wealth > grid_w[-1]] = grid_w[-1]
         wealth[wealth < grid_w[0]] = grid_w[0]
 
-        spline = interp2d(grid_w, grid_d, v, kind='cubic')  # minimum curvature in both ends
+        # spline = interp2d(grid_w, grid_d, v, kind='cubic')  # minimum curvature in both ends
+        spline = RectBivariateSpline(grid_w, grid_d, v.T)
 
         # plt.scatter(debt, wealth)
         # plt.show()
 
-        v_w = spline(wealth, debt)
+        v_w = spline.ev(wealth, debt)
 
         # fig = plt.figure()
         # ax = fig.add_subplot(111, projection='3d')

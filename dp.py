@@ -1,4 +1,4 @@
-import os
+import time
 import numpy as np
 import pandas as pd
 from numpy.polynomial.hermite import hermgauss
@@ -51,8 +51,10 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
     ###########################################################################
     for t in range(END_AGE-START_AGE-1, -1, -1):       # t: 77 to 0 / t+22: 99 to 22
         print('############ Age: ', t+START_AGE, '#############')
+        start_time = time.time()
 
         for i in range(N_W):
+            print('wealth_grid_progress: ', i / N_W * 100)
             for j in range(N_D):
                 repymt = np.linspace(0, min(grid_d[j], grid_w[i]), N_P)  # TODO:
                 consmp = np.zeros((N_P, N_C))
@@ -79,16 +81,24 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
                     expected_value = exp_val(income_with_tran[:, t+1], np.exp(inc_shk_perm(t+1)),
                                              savings_incr, debt, grid_w, grid_d, v, weights, t+START_AGE, flag)  # using Y_t+1 !
 
-                v_array = u_r + DELTA * prob[t] * expected_value    # v_array has size (N_P * N_C, N_P * N_C)
-                # v_array = v_array.reshape(N_P, N_C)
+                # v_array = u_r + DELTA * prob[t] * expected_value    # v_array has size (N_P * N_C, N_P * N_C)
+                # # v_array = v_array.reshape(N_P, N_C)
+                # v_proxy[j, i] = np.max(v_array)
+                # row, col = np.unravel_index(np.argmax(v_array, axis=None), v_array.shape)
+                # c_proxy[j, i] = consmp[col // N_P]
+                # repayment[j, i] = repymt[row // N_C]  #
+
+                v_array = u_r + DELTA * prob[t] * expected_value    # v_array has size (1, N_P * N_C)
+                v_array = v_array.reshape(N_P, N_C)
                 v_proxy[j, i] = np.max(v_array)
-                row, col = np.unravel_index(np.argmax(v_array, axis=None), v_array.shape)
-                c_proxy[j, i] = consmp[col // N_P]
-                repayment[j, i] = repymt[row // N_C]  #
+                n_row, n_col = np.unravel_index(np.argmax(v_array, axis=None), v_array.shape)
+                c_proxy[j, i] = consmp[n_row, n_col]
+                repayment[j, i] = repymt[n_row]
 
         # # dump consumption array and value function array
         # c_collection[str(t + START_AGE)] = c[1, :]
         # v_collection[str(t + START_AGE)] = v[1, :]
+        print("--- %s seconds ---" % (time.time() - start_time))
 
         # change v & c for calculation next stage
         v = v_proxy
