@@ -30,21 +30,22 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
     v = np.zeros((N_D, N_W))
     c = np.zeros((N_D, N_W))
     v_proxy = np.zeros((N_D, N_W))
-    c_proxy = np.zeros((N_D, N_W))
-    repayment = np.zeros((N_D, N_W))
+    p = np.zeros((N_D, N_W))
 
     # terminal period: consume all the wealth, repay all the debt
     ut = utility(grid_w, GAMMA)
     v[:] = ut
     c[:] = grid_w
-    repayment[:] = grid_d[None].T
+    p[:] = grid_d[None].T
 
-    # # collect results
-    # col_names = [str(age + START_AGE) for age in range(END_AGE-START_AGE, -1, -1)]     # 100 to 22
-    # c_collection = pd.DataFrame(index=pd.Int64Index(range(N_W)), columns=col_names)
-    # v_collection = pd.DataFrame(index=pd.Int64Index(range(N_W)), columns=col_names)
-    # c_collection[str(END_AGE)] = c[0, :]
-    # v_collection[str(END_AGE)] = v[0, :]
+    # collect results
+    c_over_age = np.zeros((END_AGE-START_AGE+1, N_D, N_W))
+    p_over_age = np.zeros((END_AGE-START_AGE+1, N_D, N_W))
+    v_over_age = np.zeros((END_AGE-START_AGE+1, N_D, N_W))
+
+    c_over_age[-1] = c
+    p_over_age[-1] = p
+    v_over_age[-1] = v
 
     ###########################################################################
     #                         Dynamic Programming                             #
@@ -53,13 +54,13 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
         print('############ Age: ', t+START_AGE, '#############')
         start_time = time.time()
 
-        for i in range(N_W):
+        for j in range(N_W):
             print('wealth_grid_progress: ', i / N_W * 100)
-            for j in range(N_D):
-                repymt = np.linspace(0, min(grid_d[j], grid_w[i]), N_P)  # TODO:
+            for i in range(N_D):
+                repymt = np.linspace(0, min(grid_d[i], grid_w[j]), N_P)  # TODO:
                 consmp = np.zeros((N_P, N_C))
                 for k in range(len(repymt)):
-                    consmp[k, :] = np.linspace(0, grid_w[i] - repymt[k], N_C)
+                    consmp[k, :] = np.linspace(0, grid_w[j] - repymt[k], N_C)
 
                 u_r = np.apply_along_axis(utility, 1, consmp, GAMMA)
                 u_r = u_r.flatten()
@@ -69,7 +70,7 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
                 savings_incr = savings_incr.flatten()
 
                 # debt evolution equation
-                debt = grid_d[j] * (1 + I) - repymt
+                debt = grid_d[i] * (1 + I) - repymt
                 debt[debt > grid_d[-1]] = grid_d[-1]
                 debt[debt < grid_d[0]] = grid_d[0]
                 debt = np.repeat(debt, N_C)
@@ -81,28 +82,21 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
                     expected_value = exp_val(income_with_tran[:, t+1], np.exp(inc_shk_perm(t+1)),
                                              savings_incr, debt, grid_w, grid_d, v, weights, t+START_AGE, flag)  # using Y_t+1 !
 
-                # v_array = u_r + DELTA * prob[t] * expected_value    # v_array has size (N_P * N_C, N_P * N_C)
-                # # v_array = v_array.reshape(N_P, N_C)
-                # v_proxy[j, i] = np.max(v_array)
-                # row, col = np.unravel_index(np.argmax(v_array, axis=None), v_array.shape)
-                # c_proxy[j, i] = consmp[col // N_P]
-                # repayment[j, i] = repymt[row // N_C]  #
-
                 v_array = u_r + DELTA * prob[t] * expected_value    # v_array has size (1, N_P * N_C)
                 v_array = v_array.reshape(N_P, N_C)
-                v_proxy[j, i] = np.max(v_array)
+                v_proxy[i, j] = np.max(v_array)
                 n_row, n_col = np.unravel_index(np.argmax(v_array, axis=None), v_array.shape)
-                c_proxy[j, i] = consmp[n_row, n_col]
-                repayment[j, i] = repymt[n_row]
+                c[i, j] = consmp[n_row, n_col]
+                p[i, j] = repymt[n_row]
 
-        # # dump consumption array and value function array
-        # c_collection[str(t + START_AGE)] = c[1, :]
-        # v_collection[str(t + START_AGE)] = v[1, :]
+        c_over_age[t] = c
+        p_over_age[t] = p
+        v_over_age[t] = v_proxy
+
         print("--- %s seconds ---" % (time.time() - start_time))
 
-        # change v & c for calculation next stage
+        # change v for calculation next stage
         v = v_proxy
-        c = c_proxy  # useless here
 
-    # return c_collection, v_collection
+    return c_over_age, p_over_age, v_over_age
 
