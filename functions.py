@@ -3,15 +3,12 @@ import numpy as np
 import pandas as pd
 from constants import *
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
 
 
 ###########################################################################
 #                              Functions                                  #
 ###########################################################################
-
-
 def utility(values, gamma):
     if gamma == 1:
         return np.log(values)

@@ -55,7 +55,7 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
         start_time = time.time()
 
         for j in range(N_W):
-            print('wealth_grid_progress: ', i / N_W * 100)
+            print('wealth_grid_progress: ', j / N_W * 100)
             for i in range(N_D):
                 repymt = np.linspace(0, min(grid_d[i], grid_w[j]), N_P)  # TODO:
                 consmp = np.zeros((N_P, N_C))
