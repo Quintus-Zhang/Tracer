@@ -72,7 +72,7 @@ if run_dp:
 # for i in range(N):
 #     c_proc, inc = generate_consumption_process(income_bf_ret, sigma_perm, sigma_tran, c_func_df, flag)
 #
-#     # c_proc = pd.DataFrame(c_proc)
+#     # c_proc = pd.DataFrame(c_proc)7
 #     # c_proc.to_excel(c_proc_fp, index=False)
 #
 #     # inc = pd.DataFrame(inc)
@@ -93,8 +93,8 @@ if run_dp:
 #     print(c_ce)
 
 # Params check
-print('STD:', c_ce_arr.std())
-print('Mean:', c_ce_arr.mean())
+# print('STD:', c_ce_arr.std())
+# print('Mean:', c_ce_arr.mean())
 print("--- %s seconds ---" % (time.time() - start_time))
 print('AltDeg: ', AltDeg)
 print('permanent shock: ', sigma_perm)
