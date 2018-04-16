@@ -4,11 +4,11 @@
 START_AGE = 22            #
 END_AGE = 100             #
 RETIRE_AGE = 65           # retirement age
-N_W = 501
+N_W = 301
 LOWER_BOUND_W = 1         # lower bound of wealth
 UPPER_BOUND_W = 15000000    # upper bound of wealth
 EXPAND_FAC = 3
-N_C = 1501
+N_C = 1001
 LOWER_BOUND_C = 0
 GAMMA = 2                 # risk preference parameter
 R = 0.02                  # risk-free rate
