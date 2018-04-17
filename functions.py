@@ -109,24 +109,14 @@ def exp_val_r(inc, exp_inc_shk_perm, savings_incr, debt, grid_w, grid_d, v, weig
         # if inc >= F * P_BAR and debt >= P_BAR:  ]# TODO
 
 
-
         COH = savings_incr + inc
 
         COH[COH > grid_w[-1]] = grid_w[-1]
         COH[COH < grid_w[0]] = grid_w[0]
 
-        spline = RectBivariateSpline(grid_w, grid_d, v.T)
+        spline = RectBivariateSpline(grid_d, grid_w, v)
 
-        # plt.scatter(debt, COH)
-        # plt.show()
-
-        v_w = spline.ev(COH, debt)
-
-        # fig = plt.figure()
-        # ax = fig.add_subplot(111, projection='3d')
-        # x, y = np.meshgrid(COH[:1000], debt[:1000])
-        # ax.scatter(x, y, v_w)
-        # plt.show()
+        v_w = spline.ev(debt, COH)
 
         temp = weight[k] * v_w
         ev = ev + temp

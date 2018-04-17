@@ -50,39 +50,30 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
         print('############ Age: ', t+START_AGE, '#############')
         start_time = time.time()
 
-        for j in range(N_W):
-            print('wealth_grid_progress: ', j / N_W * 100)
-            for i in range(N_D):
-                repymt = np.linspace(0, min(grid_d[i], grid_w[j]), N_P)  # TODO:
-                consmp = np.zeros((N_P, N_C))
-                for k in range(len(repymt)):
-                    consmp[k, :] = np.linspace(0, grid_w[j] - repymt[k], N_C)
+        for i in range(N_W):
+            print('wealth_grid_progress: ', i / N_W * 100)
+            consmp = np.linspace(0, grid_w[i], N_C)
+            u_r = utility(consmp, GAMMA)
+            u_r = u_r[None].T
 
-                u_r = np.apply_along_axis(utility, 1, consmp, GAMMA)
-                u_r = u_r.flatten()
+            savings = grid_w[i] - np.linspace(0, grid_w[i], N_C)
+            savings_incr = savings * (1 + R)
+            savings_incr = savings_incr[None].T
 
-                savings = consmp[:, -1][None].T - consmp  # the last column in the consmp is the leftover wealth
-                savings_incr = savings * (1 + R)
-                savings_incr = savings_incr.flatten()
+            debt = grid_d
 
-                # debt evolution equation
-                debt = grid_d[i] * (1 + I) - repymt
-                debt[debt > grid_d[-1]] = grid_d[-1]
-                debt[debt < grid_d[0]] = grid_d[0]
-                debt = np.repeat(debt, N_C)
+            if t + START_AGE >= RETIRE_AGE:
+                expected_value = exp_val_r(income_ret, np.exp(inc_shk_perm(RETIRE_AGE-START_AGE+1)),
+                                           savings_incr, debt, grid_w, grid_d, v, weights)
+            else:
+                expected_value = exp_val(income_with_tran[:, t+1], np.exp(inc_shk_perm(t+1)),
+                                         savings_incr, debt, grid_w, grid_d, v, weights, t+START_AGE, flag)  # using Y_t+1 !
 
-                if t + START_AGE >= RETIRE_AGE:
-                    expected_value = exp_val_r(income_ret, np.exp(inc_shk_perm(RETIRE_AGE-START_AGE+1)),
-                                               savings_incr, debt, grid_w, grid_d, v, weights)
-                else:
-                    expected_value = exp_val(income_with_tran[:, t+1], np.exp(inc_shk_perm(t+1)),
-                                             savings_incr, debt, grid_w, grid_d, v, weights, t+START_AGE, flag)  # using Y_t+1 !
-
-                v_array = u_r + DELTA * prob[t] * expected_value    # v_array has size (1, N_P * N_C)
-                v_array = v_array.reshape(N_P, N_C)
-                v_proxy[i, j] = np.max(v_array)
-                n_row, n_col = np.unravel_index(np.argmax(v_array, axis=None), v_array.shape)
-                c[i, j] = consmp[n_row, n_col]
+            v_array = u_r + DELTA * prob[t] * expected_value    # v_array has size (1, N_P * N_C)
+            v_array = v_array.reshape(N_P, N_C)
+            v_proxy[i, j] = np.max(v_array)
+            n_row, n_col = np.unravel_index(np.argmax(v_array, axis=None), v_array.shape)
+            c[i, j] = consmp[n_row, n_col]
 
         c_over_age[t] = c
         v_over_age[t] = v_proxy
