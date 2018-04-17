@@ -54,14 +54,14 @@ def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, debt, grid_w, gri
     #     for k in range(3):
     #         inc = inc_with_shk_tran[j] * exp_inc_shk_perm[k]
     #
-    #         wealth = savings_incr + inc
+    #         COH = savings_incr + inc
     #
-    #         wealth[wealth > grid_w[-1]] = grid_w[-1]
-    #         wealth[wealth < grid_w[0]] = grid_w[0]
+    #         COH[COH > grid_w[-1]] = grid_w[-1]
+    #         COH[COH < grid_w[0]] = grid_w[0]
     #
     #         spline = CubicSpline(grid_w, v, bc_type='natural')  # minimum curvature in both ends
     #
-    #         v_w = spline(wealth)
+    #         v_w = spline(COH)
     #         temp = weight[j] * weight[k] * v_w
     #         ev = ev + temp
     # ev = ev / np.pi   # quadrature
@@ -83,15 +83,15 @@ def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, debt, grid_w, gri
                     else:
                         pass
 
-                wealth = savings_incr + inc
+                COH = savings_incr + inc
 
-                wealth[wealth > grid_w[-1]] = grid_w[-1]
-                wealth[wealth < grid_w[0]] = grid_w[0]
+                COH[COH > grid_w[-1]] = grid_w[-1]
+                COH[COH < grid_w[0]] = grid_w[0]
 
                 # spline = interp2d(grid_w, grid_d, v, kind='cubic')  # minimum curvature in both ends
                 spline = RectBivariateSpline(grid_w, grid_d, v.T)
 
-                v_w = spline.ev(wealth, debt)
+                v_w = spline.ev(COH, debt)
 
                 temp = weight[j] * weight[k] * v_w
                 ev = ev + temp
@@ -104,22 +104,27 @@ def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, debt, grid_w, gri
 def exp_val_r(inc, exp_inc_shk_perm, savings_incr, debt, grid_w, grid_d, v, weight):
     ev = 0.0
     for k in range(3):
-        wealth = savings_incr + inc * exp_inc_shk_perm[k] * ret_frac[AltDeg]
+        inc = inc * exp_inc_shk_perm[k] * ret_frac[AltDeg]
 
-        wealth[wealth > grid_w[-1]] = grid_w[-1]
-        wealth[wealth < grid_w[0]] = grid_w[0]
+        # if inc >= F * P_BAR and debt >= P_BAR:  ]# TODO
 
-        # spline = interp2d(grid_w, grid_d, v, kind='cubic')  # minimum curvature in both ends
+
+
+        COH = savings_incr + inc
+
+        COH[COH > grid_w[-1]] = grid_w[-1]
+        COH[COH < grid_w[0]] = grid_w[0]
+
         spline = RectBivariateSpline(grid_w, grid_d, v.T)
 
-        # plt.scatter(debt, wealth)
+        # plt.scatter(debt, COH)
         # plt.show()
 
-        v_w = spline.ev(wealth, debt)
+        v_w = spline.ev(COH, debt)
 
         # fig = plt.figure()
         # ax = fig.add_subplot(111, projection='3d')
-        # x, y = np.meshgrid(wealth[:1000], debt[:1000])
+        # x, y = np.meshgrid(COH[:1000], debt[:1000])
         # ax.scatter(x, y, v_w)
         # plt.show()
 

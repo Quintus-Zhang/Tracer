@@ -30,21 +30,17 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
     v = np.zeros((N_D, N_W))
     c = np.zeros((N_D, N_W))
     v_proxy = np.zeros((N_D, N_W))
-    p = np.zeros((N_D, N_W))
 
     # terminal period: consume all the wealth, repay all the debt
     ut = utility(grid_w, GAMMA)
     v[:] = ut
     c[:] = grid_w
-    p[:] = grid_d[None].T
 
     # collect results
     c_over_age = np.zeros((END_AGE-START_AGE+1, N_D, N_W))
-    p_over_age = np.zeros((END_AGE-START_AGE+1, N_D, N_W))
     v_over_age = np.zeros((END_AGE-START_AGE+1, N_D, N_W))
 
     c_over_age[-1] = c
-    p_over_age[-1] = p
     v_over_age[-1] = v
 
     ###########################################################################
@@ -87,10 +83,8 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
                 v_proxy[i, j] = np.max(v_array)
                 n_row, n_col = np.unravel_index(np.argmax(v_array, axis=None), v_array.shape)
                 c[i, j] = consmp[n_row, n_col]
-                p[i, j] = repymt[n_row]
 
         c_over_age[t] = c
-        p_over_age[t] = p
         v_over_age[t] = v_proxy
 
         print("--- %s seconds ---" % (time.time() - start_time))
@@ -98,5 +92,5 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
         # change v for calculation next stage
         v = v_proxy
 
-    return c_over_age, p_over_age, v_over_age
+    return c_over_age, v_over_age
 

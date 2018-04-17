@@ -48,13 +48,10 @@ cond_prob = cond_prob.values
 ###########################################################################
 if run_dp:
     c_func_fp = os.path.join(base_path, 'results', 'c_func.pkl')
-    p_func_fp = os.path.join(base_path, 'results', 'p_func.pkl')
     v_func_fp = os.path.join(base_path, 'results', 'v_func.pkl')
-    c_func, p_func, v_func = dp_solver(income_bf_ret, income_ret, sigma_perm, sigma_tran, cond_prob, flag)
+    c_func, v_func = dp_solver(income_bf_ret, income_ret, sigma_perm, sigma_tran, cond_prob, flag)
     with open(c_func_fp, 'wb') as f:
         pickle.dump(c_func, f)
-    with open(p_func_fp, 'wb') as f:
-        pickle.dump(p_func, f)
     with open(v_func_fp, 'wb') as f:
         pickle.dump(v_func, f)
 # else:
