@@ -85,9 +85,9 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
                 v_array = u_r + DELTA * prob[t] * expected_value    # v_array has size (1, N_P * N_C)
                 v_array = v_array.reshape(N_P, N_C)
                 v_proxy[i, j] = np.max(v_array)
-                n_row, n_col = np.unravel_index(np.argmax(v_array, axis=None), v_array.shape)
-                c[i, j] = consmp[n_row, n_col]
-                p[i, j] = repymt[n_row]
+                idx_row, idx_col = np.unravel_index(np.argmax(v_array, axis=None), v_array.shape)
+                c[i, j] = consmp[idx_row, idx_col]
+                p[i, j] = repymt[idx_row]
 
         c_over_age[t] = c
         p_over_age[t] = p
