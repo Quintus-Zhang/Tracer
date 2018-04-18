@@ -191,6 +191,7 @@ def exp_val_new(y, savings_incr, grid_w, v):
 
     p = mp.Pool(processes=mp.cpu_count())
     v_w = p.apply(spline, args=(COH,))
+    p.close()
 
     # for i in range(N_SIM):
     #     v_w[i, :] = spline(COH[i, :])
