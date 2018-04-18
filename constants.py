@@ -14,7 +14,7 @@ GAMMA = 2                 # risk preference parameter
 R = 0.02                  # risk-free rate
 DELTA = 0.99              # discount factor
 MU = 0                    # expectation of income shocks
-N_SIM = 100000            # number of draws
+N_SIM = 10000             # number of draws
 INIT_WEALTH = 0
 
 AltDeg = 4
@@ -55,4 +55,6 @@ rho = 0.931001221
 TERM = 10
 
 # ppt
-ppt = 10031.76 # 3483.25
+P_BAR = 3483.25
+INIT_DEBT = 25000
+rate = 0.07
