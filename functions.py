@@ -189,7 +189,7 @@ def exp_val_new(y, savings_incr, grid_w, v):
 
     spline = CubicSpline(grid_w, v, bc_type='natural')  # minimum curvature in both ends
 
-    p = mp.Pool(processes=4)
+    p = mp.Pool(processes=mp.cpu_count())
     v_w = p.apply(spline, args=(COH,))
 
     # for i in range(N_SIM):
