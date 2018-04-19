@@ -18,8 +18,8 @@ N_SIM = 10000             # number of draws
 INIT_WEALTH = 0
 
 AltDeg = 4
-flag = 'orig'  #, 'orig' 'rho'  # 'ppt'
-run_dp = False
+# flag = 'orig'  #, 'orig' 'rho'  # 'ppt'
+run_dp = True
 N = 100
 
 education_level = {
