@@ -58,7 +58,7 @@ if run_dp:
     c_func_df.to_excel(c_func_fp)
     # v.to_excel(v_func_fp)
 else:
-    c_func_fp = os.path.join(base_path, 'results', 'c function_' + education_level[AltDeg] + '.xlsx')
+    c_func_fp = os.path.join(base_path, 'results', 'Iteration_15.xlsx')
     c_func_df = pd.read_excel(c_func_fp)
 
 # prof.disable()
@@ -73,7 +73,8 @@ inc_proc_fp = os.path.join(base_path, 'results', 'inc process_' + education_leve
 
 c_ce_arr = np.zeros(N)
 for i in range(N):
-    c_proc, inc = generate_consumption_process(income_bf_ret, sigma_perm, sigma_tran, c_func_df, flag)
+    adj_income = adj_income_process(income_bf_ret, sigma_perm, sigma_tran)
+    c_proc, inc = generate_consumption_process(adj_income, c_func_df)
 
     # c_proc = pd.DataFrame(c_proc)
     # c_proc.to_excel(c_proc_fp, index=False)

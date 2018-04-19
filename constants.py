@@ -20,7 +20,7 @@ INIT_WEALTH = 0
 AltDeg = 4
 flag = 'orig'  #, 'orig' 'rho'  # 'ppt'
 run_dp = False
-N = 1
+N = 100
 
 education_level = {
     1: 'No High School',

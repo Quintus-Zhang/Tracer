@@ -23,57 +23,17 @@ def c_func(c_df, w, age):
     return c
 
 
-def generate_consumption_process(income_bf_ret, sigma_perm_shock, sigma_tran_shock, c_func_df, flag):
+def generate_consumption_process(inc, c_func_df):
     """ Calculating the certainty equivalent annual consumption and life time wealth"""
 
     YEARS = END_AGE - START_AGE + 1
 
     ###########################################################################
-    #                         simulate income process                         #
-    #              include income risks and unemployment risks                #
+    #               COH_t+1 = (1 + R)*(COH_t - C_t) + Y_t+1                   #
+    #                wealth = (1 + R)*(COH_t - C_t)                           #
     ###########################################################################
-    # add income risks - generate the random walk and normal r.v.
-    # - before retirement
-    rn_perm = np.random.normal(MU, sigma_perm_shock, (N_SIM, RETIRE_AGE - START_AGE + 1))
-    rand_walk = np.cumsum(rn_perm, axis=1)
-    rn_tran = np.random.normal(MU, sigma_tran_shock, (N_SIM, RETIRE_AGE - START_AGE + 1))
-    inc_with_inc_risk = np.multiply(np.exp(rand_walk) * np.exp(rn_tran), income_bf_ret)
-
-    # - retirement TODO: not right here but not affect the CE, get rid of the transitory shock
-    ret_income_vec = ret_frac[AltDeg] * np.tile(inc_with_inc_risk[:, -1], (END_AGE - RETIRE_AGE, 1)).T
-    inc_with_inc_risk = np.append(inc_with_inc_risk, ret_income_vec, axis=1)
-
-    # add unemployment risks - generate bernoulli random variables
-    p = 1 - unempl_rate[AltDeg]
-    r = bernoulli.rvs(p, size=(RETIRE_AGE - START_AGE + 1, N_SIM)).astype(float)
-    r[r == 0] = unemp_frac[AltDeg]
-
-    ones = np.ones((END_AGE - RETIRE_AGE, N_SIM))
-    bern = np.append(r, ones, axis=0)
-
-    inc = np.multiply(inc_with_inc_risk, bern.T)
-
-    # ISA, Loan or orig
-    if flag == 'rho':
-        inc[:, :TERM] *= rho
-    elif flag == 'ppt':
-        inc[:, :TERM] -= ppt
-    else:
-        pass
-
-    # # MARK: test
-    # row, col = np.nonzero(inc < 0)
-    # num_row_dropped = len(np.unique(row))
-    # inc = np.delete(inc, row, axis=0)
-    # print(num_row_dropped)
-    # print(inc.shape)
-
-    ###########################################################################
-    #                      COH_t+1 = (1 + R)*(COH_t - C_t) + Y_t+1                   #
-    #                       wealth = (1 + R)*(COH_t - C_t)                           #
-    ###########################################################################
-    cash_on_hand = np.zeros((N_SIM, YEARS))  # MARK
-    c = np.zeros((N_SIM, YEARS))  # MARK
+    cash_on_hand = np.zeros((N_SIM, YEARS))
+    c = np.zeros((N_SIM, YEARS))
 
     cash_on_hand[:, 0] = INIT_WEALTH + inc[:, 0]   # cash on hand at age 22
 
@@ -83,15 +43,15 @@ def generate_consumption_process(income_bf_ret, sigma_perm_shock, sigma_tran_sho
         cash_on_hand[:, t+1] = (1 + R) * (cash_on_hand[:, t] - c[:, t]) + inc[:, t+1]  # 1-78
     c[:, -1] = c_func(c_func_df, cash_on_hand[:, -1], END_AGE)   # consumption at age 100
 
-    # GRAPH - Average Cash-on-hand & consumption over lifetime
-    plt.plot(cash_on_hand.mean(axis=0), label='cash-on-hand')
-    plt.plot(c.mean(axis=0), label='consumption')
-    plt.title(f'Average Cash-on-hand and Consumption over the life cycle\n UPPER_BOUND_W = {UPPER_BOUND_W}')
-    plt.xlabel('Age')
-    plt.ylabel('Dollar')
-    plt.legend()
-    plt.grid()
-    plt.show()
+    # # GRAPH - Average Cash-on-hand & consumption over lifetime
+    # plt.plot(cash_on_hand.mean(axis=0), label='cash-on-hand')
+    # plt.plot(c.mean(axis=0), label='consumption')
+    # plt.title(f'Average Cash-on-hand and Consumption over the life cycle\n UPPER_BOUND_W = {UPPER_BOUND_W}')
+    # plt.xlabel('Age')
+    # plt.ylabel('Dollar')
+    # plt.legend()
+    # plt.grid()
+    # plt.show()
 
     return c, inc
 
