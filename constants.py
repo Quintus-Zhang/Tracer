@@ -18,9 +18,9 @@ N_SIM = 100000            # number of draws
 INIT_WEALTH = 0
 
 AltDeg = 4
-flag = 'orig'  #, 'orig' 'rho'  # 'ppt'
-run_dp = True
-N = 10
+flag = 'ppt'  #, 'orig' 'rho'  # 'ppt'
+run_dp = False
+N = 1
 
 education_level = {
     1: 'No High School',
@@ -55,4 +55,4 @@ rho = 0.931001221
 TERM = 10
 
 # ppt
-ppt = 10031.76 # 3483.25
+ppt = 3483.25  # 10031.76 #
