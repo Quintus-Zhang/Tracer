@@ -83,15 +83,15 @@ def generate_consumption_process(income_bf_ret, sigma_perm_shock, sigma_tran_sho
         cash_on_hand[:, t+1] = (1 + R) * (cash_on_hand[:, t] - c[:, t]) + inc[:, t+1]  # 1-78
     c[:, -1] = c_func(c_func_df, cash_on_hand[:, -1], END_AGE)   # consumption at age 100
 
-    # # GRAPH - Average Cash-on-hand & consumption over lifetime
-    # plt.plot(cash_on_hand.mean(axis=0), label='cash-on-hand')
-    # plt.plot(c.mean(axis=0), label='consumption')
-    # plt.title(f'Average Cash-on-hand and Consumption over the life cycle\n UPPER_BOUND_W = {UPPER_BOUND_W}')
-    # plt.xlabel('Age')
-    # plt.ylabel('Dollar')
-    # plt.legend()
-    # plt.grid()
-    # plt.show()
+    # GRAPH - Average Cash-on-hand & consumption over lifetime
+    plt.plot(cash_on_hand.mean(axis=0), label='cash-on-hand')
+    plt.plot(c.mean(axis=0), label='consumption')
+    plt.title(f'Average Cash-on-hand and Consumption over the life cycle\n UPPER_BOUND_W = {UPPER_BOUND_W}')
+    plt.xlabel('Age')
+    plt.ylabel('Dollar')
+    plt.legend()
+    plt.grid()
+    plt.show()
 
     return c, inc
 
