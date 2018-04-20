@@ -9,6 +9,12 @@ from constants import *
 
 
 def utility(values, gamma):
+    """ Constant Relative Risk Aversion - Utility Function
+
+    :param values: array or scalar, consumption
+    :param gamma: scalar, risk preference parameter
+    :return: array or scalar, utiliy
+    """
     if gamma == 1:
         return np.log(values)
     else:
@@ -16,6 +22,11 @@ def utility(values, gamma):
 
 
 def cal_income(coeffs):
+    """ Calculating income over age by age polynomials
+
+    :param coeffs: DataFrame, containing coefficients of the age polynomials for all 3 education groups
+    :return: array, income from age 22 to 65 for education group AltDeg
+    """
     coeff_this_group = coeffs.loc[education_level[AltDeg]]
     a  = coeff_this_group['a']
     b1 = coeff_this_group['b1']
@@ -29,18 +40,24 @@ def cal_income(coeffs):
 
 
 def read_input_data(income_fp, mortal_fp):
-    age_coeff_and_var = pd.ExcelFile(income_fp)
-    # age coefficients
-    age_coeff = pd.read_excel(age_coeff_and_var, sheet_name='Coefficients')
+    """ Read data - Income(coefficients of age polynomials), Income Shocks(std), Survival Probability(conditional prob)
 
-    # decomposed variance
-    std = pd.read_excel(age_coeff_and_var, sheet_name='Variance', header=[1, 2])
+    :param income_fp: file path of the income data
+    :param mortal_fp: file path of the survival prob data
+    :return:
+        age_coeff: DataFrame, containing coefficients of the age polynomials for all 3 education groups
+        std      : DataFrame, two groups of income shocks
+        cond_prob: DataFrame, conditional survival prob from age 21 to 100
+    """
+    age_coeff_and_var = pd.ExcelFile(income_fp)
+    age_coeff = pd.read_excel(age_coeff_and_var, sheet_name='Coefficients')       # - age coefficients
+
+    std = pd.read_excel(age_coeff_and_var, sheet_name='Variance', header=[1, 2])  # - income shocks
     std.reset_index(inplace=True)
     std.drop(std.columns[0], axis=1, inplace=True)
     std.drop([1, 3], inplace=True)
     std.index = pd.CategoricalIndex(['sigma_permanent', 'sigma_transitory'])
 
-    # conditional survival probabilities
     cond_prob = pd.read_excel(mortal_fp)
     cond_prob.set_index('AGE', inplace=True)
 

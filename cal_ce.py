@@ -61,19 +61,12 @@ def generate_consumption_process(income_bf_ret, sigma_perm_shock, sigma_tran_sho
     else:
         pass
 
-    # # MARK: test
-    # row, col = np.nonzero(inc < 0)
-    # num_row_dropped = len(np.unique(row))
-    # inc = np.delete(inc, row, axis=0)
-    # print(num_row_dropped)
-    # print(inc.shape)
-
-    ###########################################################################
-    #                      COH_t+1 = (1 + R)*(COH_t - C_t) + Y_t+1                   #
-    #                       wealth = (1 + R)*(COH_t - C_t)                           #
-    ###########################################################################
-    cash_on_hand = np.zeros((N_SIM, YEARS))  # MARK
-    c = np.zeros((N_SIM, YEARS))  # MARK
+    ################################################################################
+    #                      COH_t+1 = (1 + R)*(COH_t - C_t) + Y_t+1                 #
+    #                       wealth = (1 + R)*(COH_t - C_t)                         #
+    ################################################################################
+    cash_on_hand = np.zeros((N_SIM, YEARS))
+    c = np.zeros((N_SIM, YEARS))
 
     cash_on_hand[:, 0] = INIT_WEALTH + inc[:, 0]   # cash on hand at age 22
 
@@ -97,7 +90,6 @@ def generate_consumption_process(income_bf_ret, sigma_perm_shock, sigma_tran_sho
 
 
 def cal_certainty_equi(prob, c):
-
     # discount factor
     YEARS = END_AGE - START_AGE + 1
     delta = np.ones((YEARS, 1)) * DELTA

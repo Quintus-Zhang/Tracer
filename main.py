@@ -34,8 +34,6 @@ income_ret = income_bf_ret[-1]
 # get std
 sigma_perm = std.loc['sigma_permanent', 'Labor Income Only'][education_level[AltDeg]]
 sigma_tran = std.loc['sigma_transitory', 'Labor Income Only'][education_level[AltDeg]]
-# sigma_perm = 0
-# sigma_tran = 0
 
 # get conditional survival probabilities
 cond_prob = surv_prob.loc[START_AGE:END_AGE - 1, 'CSP']  # 22:99
@@ -47,7 +45,7 @@ cond_prob = cond_prob.values
 ###########################################################################
 if run_dp:
     c_func_fp = os.path.join(base_path, 'results', 'c function_' + education_level[AltDeg] + '.xlsx')
-    v_func_fp = os.path.join(base_path, 'results', 'v function_' + education_level[AltDeg] + '.xlsx')
+    # v_func_fp = os.path.join(base_path, 'results', 'v function_' + education_level[AltDeg] + '.xlsx')
     c_func_df, v = dp_solver(income_bf_ret, income_ret, sigma_perm, sigma_tran, cond_prob, flag)
     c_func_df.to_excel(c_func_fp)
     # v.to_excel(v_func_fp)
@@ -71,13 +69,6 @@ for i in range(N):
 
     # inc = pd.DataFrame(inc)
     # inc.to_excel(inc_proc_fp, index=False)
-
-    # plt.figure()
-    # plt.plot(c_proc[:100, :])
-    # plt.show()
-    # f = (c_proc == 3000000)
-    # g = f.sum(axis=1) > 0
-    # print(g.sum())
 
     cond_prob = surv_prob.loc[START_AGE:END_AGE, 'CSP']
     prob = cond_prob.cumprod().values
