@@ -47,8 +47,8 @@ cond_prob = cond_prob.values
 ###########################################################################
 #                  DP - generate consumption functions                    #
 ###########################################################################
-prof = cProfile.Profile()
-prof.enable()
+# prof = cProfile.Profile()
+# prof.enable()
 
 if run_dp:
     c_func_fp = os.path.join(base_path, 'results', 'c function_' + education_level[AltDeg] + '.xlsx')
@@ -60,8 +60,8 @@ else:
     c_func_fp = os.path.join(base_path, 'results', 'Iteration_15.xlsx')
     c_func_df = pd.read_excel(c_func_fp)
 
-prof.disable()
-prof.dump_stats(os.path.join(base_path, 'results', f'prof.stats'))
+# prof.disable()
+# prof.dump_stats(os.path.join(base_path, 'results', f'prof.stats'))
 
 
 ###########################################################################
