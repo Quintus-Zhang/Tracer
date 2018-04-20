@@ -2,8 +2,8 @@ import os
 import numpy as np
 import pandas as pd
 from numpy.polynomial.hermite import hermgauss
-from functions import utility, exp_val, exp_val_r
-from constants import START_AGE, END_AGE, RETIRE_AGE, N_W, UPPER_BOUND_W, N_C, GAMMA, R, DELTA, LOWER_BOUND_W, EXPAND_FAC, LOWER_BOUND_C
+from functions import *
+from constants import *
 
 
 def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag):

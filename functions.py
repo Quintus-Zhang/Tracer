@@ -18,7 +18,8 @@ def utility(values, gamma):
     if gamma == 1:
         return np.log(values)
     else:
-        return values**(1-gamma) / (1-gamma)
+        with np.errstate(divide='ignore'):
+            return values**(1-gamma) / (1-gamma)
 
 
 def cal_income(coeffs):
