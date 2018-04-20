@@ -23,7 +23,7 @@ def c_func(c_df, w, age):
     return c
 
 
-def generate_consumption_process(income_bf_ret, sigma_perm_shock, sigma_tran_shock, c_func_df, flag):
+def generate_consumption_process(income_bf_ret, sigma_perm_shock, sigma_tran_shock, c_func_df, TERM, rho):
     """ Calculating the certainty equivalent annual consumption and life time wealth"""
 
     YEARS = END_AGE - START_AGE + 1
@@ -53,27 +53,15 @@ def generate_consumption_process(income_bf_ret, sigma_perm_shock, sigma_tran_sho
 
     inc = np.multiply(inc_with_inc_risk, bern.T)
 
-    # ISA, Loan or orig
-    if flag == 'rho':
-        inc[:, :TERM] *= rho
-    elif flag == 'ppt':
-        inc[:, :TERM] -= ppt
-    else:
-        pass
+    # ISA
+    inc[:, :TERM] *= rho
 
-    # # MARK: test
-    # row, col = np.nonzero(inc < 0)
-    # num_row_dropped = len(np.unique(row))
-    # inc = np.delete(inc, row, axis=0)
-    # print(num_row_dropped)
-    # print(inc.shape)
-
-    ###########################################################################
+    ##################################################################################
     #                      COH_t+1 = (1 + R)*(COH_t - C_t) + Y_t+1                   #
     #                       wealth = (1 + R)*(COH_t - C_t)                           #
-    ###########################################################################
-    cash_on_hand = np.zeros((N_SIM, YEARS))  # MARK
-    c = np.zeros((N_SIM, YEARS))  # MARK
+    ##################################################################################
+    cash_on_hand = np.zeros((N_SIM, YEARS))
+    c = np.zeros((N_SIM, YEARS))
 
     cash_on_hand[:, 0] = INIT_WEALTH + inc[:, 0]   # cash on hand at age 22
 

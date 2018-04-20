@@ -47,7 +47,7 @@ def read_input_data(income_fp, mortal_fp):
     return age_coeff, std, cond_prob
 
 
-def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight, age, flag):
+def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight, age, TERM, rho):
     # ev = 0.0
     # for j in range(3):
     #     for k in range(3):
@@ -75,12 +75,7 @@ def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight
                 inc = inc * unemp_frac[AltDeg] if unemp_flag else inc         # theta
 
                 if age < START_AGE + TERM:
-                    if flag == 'rho':
-                        inc *= rho
-                    elif flag == 'ppt':
-                        inc -= ppt
-                    else:
-                        pass
+                    inc *= rho
 
                 wealth = savings_incr + inc
 
@@ -127,4 +122,5 @@ def exp_val_r(inc, exp_inc_shk_perm, savings_incr, grid_w, v, weight):
 #
 #     ev = v_w
 #     return ev
+
 

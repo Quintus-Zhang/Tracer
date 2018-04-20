@@ -6,7 +6,7 @@ from functions import utility, exp_val, exp_val_r
 from constants import START_AGE, END_AGE, RETIRE_AGE, N_W, UPPER_BOUND_W, N_C, GAMMA, R, DELTA, LOWER_BOUND_W, EXPAND_FAC, LOWER_BOUND_C
 
 
-def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag):
+def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, TERM, rho):
     ###########################################################################
     #                                Setup                                    #
     ###########################################################################
@@ -48,8 +48,6 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
         for i in range(N_W):
 
             # Grid Search: for each W in the grid_w, we search for the C which maximizes the V
-            # even_grid = np.linspace(0, 1, N_C)
-            # consmp = LOWER_BOUND_C + (grid_w[i] - LOWER_BOUND_C)*even_grid**EXPAND_FAC
             consmp = np.linspace(0, grid_w[i], N_C)
             u_r = utility(consmp, GAMMA)
             u_r = u_r[None].T
@@ -59,13 +57,21 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag
             savings_incr = savings_incr[None].T
 
             if t + START_AGE >= RETIRE_AGE:
-                expected_value = exp_val_r(income_ret, np.exp(inc_shk_perm(RETIRE_AGE-START_AGE+1)), savings_incr, grid_w, v[0, :], weights)
-                # expected_value = exp_val_r(income_ret, savings_incr, grid_w, v[0, :])
+                expected_value = exp_val_r(income_ret, np.exp(inc_shk_perm(RETIRE_AGE-START_AGE+1)), savings_incr,
+                                           grid_w, v[0, :], weights)
             else:
                 expected_value = exp_val(income_with_tran[:, t+1], np.exp(inc_shk_perm(t+1)),
-                                         savings_incr, grid_w, v[0, :], weights, t+START_AGE, flag)  # using Y_t+1 !
+                                         savings_incr, grid_w, v[0, :], weights, t+START_AGE, TERM, rho)  # using Y_t+1 !
 
-            v_array = u_r + DELTA * prob[t] * expected_value    # v_array has size N_C-by-1
+            try:
+                v_array = u_r + DELTA * prob[t] * expected_value    # v_array has size N_C-by-1
+            except:
+                print(v_array)
+                print(v_array.shape)
+                print(u_r)
+                print(prob[t])
+                print(expected_value)
+                print(expected_value.shape)
             v[1, i] = np.max(v_array)
             pos = np.argmax(v_array)
             c[1, i] = consmp[pos]
