@@ -45,3 +45,6 @@ $$E_t[V_{t+1}(R(W_{t}-C_{t})+Y_{t+1})]$$
 [ref1](https://en.wikipedia.org/wiki/Gauss–Hermite_quadrature)
 [ref2](https://stats.stackexchange.com/questions/159650/why-does-the-variance-of-the-random-walk-increase)
 [ref3](https://docs.scipy.org/doc/numpy-1.13.0/reference/generated/numpy.polynomial.hermite.hermgauss.html)
+
+
+![haha](https://github.com/Quintus-Zhang/Tracer/blob/master/charts/haha.png)
