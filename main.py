@@ -46,23 +46,28 @@ cond_prob = cond_prob.values
 isa_params = pd.read_excel(isa_fp)
 ce = isa_params[["TERM FOR ISA", "1- rho"]].copy()
 
-for j in range(15):
-    TERM = isa_params.loc[j, 'TERM FOR ISA']
-    rho = isa_params.loc[j, '1- rho']
+ce = pd.concat([ce]*7, ignore_index=True)
+ce['gamma'] = np.repeat([0, 0.5, 1, 2, 3, 3.5, 4], 15)
 
+for j in range(len(ce)):
+    TERM = ce.loc[j, 'TERM FOR ISA']
+    rho = ce.loc[j, '1- rho']
+    gamma = ce.loc[j, 'gamma']
+
+    start = time.time()
+    print(f'########## Term: {TERM} | Rho: {rho:.2f} | Gamma: {gamma} ##########')
     ###########################################################################
     #                  DP - generate consumption functions                    #
     ###########################################################################
     if run_dp:
-        c_func_fp = os.path.join(base_path, 'results', f'c function_{TERM}_{rho:.2f}.xlsx')
+        c_func_fp = os.path.join(base_path, 'results', f'c function_{TERM}_{rho:.2f}_{gamma}.xlsx')
         # v_func_fp = os.path.join(base_path, 'results', 'v function_' + education_level[AltDeg] + '.xlsx')
-        c_func_df, v = dp_solver(income_bf_ret, income_ret, sigma_perm, sigma_tran, cond_prob, TERM, rho)
+        c_func_df, v = dp_solver(income_bf_ret, income_ret, sigma_perm, sigma_tran, cond_prob, TERM, rho, gamma)
         c_func_df.to_excel(c_func_fp)
         # v.to_excel(v_func_fp)
     else:
         c_func_fp = os.path.join(base_path, 'results', 'Iteration_8.xlsx')
         c_func_df = pd.read_excel(c_func_fp)
-
 
     ###########################################################################
     #        CE - calculate consumption process & certainty equivalent        #
@@ -82,10 +87,12 @@ for j in range(15):
 
         prob = surv_prob.loc[START_AGE:END_AGE, 'CSP'].cumprod().values
 
-        c_ce, _ = cal_certainty_equi(prob, c_proc)
+        c_ce, _ = cal_certainty_equi(prob, c_proc, gamma)
         c_ce_arr[i] = c_ce
 
     ce.loc[j, 'Consumption CE'] = c_ce_arr.mean()
+
+    print(f"------ {time.time() - start} seconds ------")
 
 ce.to_excel(ce_fp)
 
@@ -101,7 +108,7 @@ print('lambda: ', ret_frac[AltDeg])
 print('theta: ',  unemp_frac[AltDeg])
 print('pi: ', unempl_rate[AltDeg])
 print('W0: ', INIT_WEALTH)
-print('Gamma: ', GAMMA)
+print('Gamma: ', gamma)
 print('rho: ', rho)
 print('term: ', TERM)
 

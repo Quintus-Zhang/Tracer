@@ -84,7 +84,7 @@ def generate_consumption_process(income_bf_ret, sigma_perm_shock, sigma_tran_sho
     return c, inc
 
 
-def cal_certainty_equi(prob, c):
+def cal_certainty_equi(prob, c, GAMMA):
 
     # discount factor
     YEARS = END_AGE - START_AGE + 1

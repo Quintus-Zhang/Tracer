@@ -3,10 +3,10 @@ import numpy as np
 import pandas as pd
 from numpy.polynomial.hermite import hermgauss
 from functions import utility, exp_val, exp_val_r
-from constants import START_AGE, END_AGE, RETIRE_AGE, N_W, UPPER_BOUND_W, N_C, GAMMA, R, DELTA, LOWER_BOUND_W, EXPAND_FAC, LOWER_BOUND_C
+from constants import *
 
 
-def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, TERM, rho):
+def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, TERM, rho, GAMMA):
     ###########################################################################
     #                                Setup                                    #
     ###########################################################################
@@ -44,7 +44,7 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, TERM
     #                         Dynamic Programming                             #
     ###########################################################################
     for t in range(END_AGE-START_AGE-1, -1, -1):       # t: 77 to 0 / t+22: 99 to 22
-        print('############ Age: ', t+START_AGE, '#############')
+        # print('############ Age: ', t+START_AGE, '#############')
         for i in range(N_W):
 
             # Grid Search: for each W in the grid_w, we search for the C which maximizes the V
