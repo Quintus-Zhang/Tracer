@@ -1,9 +1,7 @@
 ### The Model
 We are trying to solve a stochastic dynamic programming problem with discrete and finite horizon, and continuous state space. The Bellman equation for this problem is given by:
 
-[comment]: <> ($$V_t(W_t) = Max_{C_t \ge 0} [U(C_t) + \beta p_tE_t(V_{t+1}(W_{t+1}))],\ \ for\ t\lt T$$)
-
-![Bellman Equation](http://www.sciweavers.org/tex2img.php?eq=%24%24V_t%28W_t%29%20%3D%20Max_%7BC_t%20%5Cge%200%7D%20%5BU%28C_t%29%20%2B%20%5Cbeta%20p_tE_t%28V_%7Bt%2B1%7D%28W_%7Bt%2B1%7D%29%29%5D%2C%5C%20%5C%20for%20t%20%3C%20T%24%24%0A&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+$$V_t(W_t) = Max_{C_t \ge 0} [U(C_t) + \beta p_tE_t(V_{t+1}(W_{t+1}))],\ \ for\ t\lt T$$
 
 where $C_t$ is the level of consumption at time $t$, $\beta \lt 1$ is the discount factor, $p_t$ is the probability that an agent is alive at time $t+1$ conditional on being alive at time $t$
 
