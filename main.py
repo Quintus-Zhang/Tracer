@@ -38,12 +38,12 @@ def run_model(TERM, rho, gamma):
         c_ce_arr[i] = c_ce
 
     print(f"------ {time.time() - start} seconds ------")
+    print(c_ce_arr.mean())
     return c_ce_arr.mean()
 
 
 start_time = time.time()
 
-# TODO: test if std of simulated utility decrease as the number of simulations increase
 ###########################################################################
 #                      Setup - file path & raw data                       #
 ###########################################################################
@@ -77,8 +77,9 @@ sigma_tran = std.loc['sigma_transitory', 'Labor Income Only'][education_level[Al
 isa_params = pd.read_excel(isa_fp)
 ce = isa_params[["TERM FOR ISA", "1- rho"]].copy()
 
-ce = pd.concat([ce]*7, ignore_index=True)
-ce['gamma'] = np.repeat([0, 0.5, 1, 2, 3, 3.5, 4], 15)
+gamma_arr = np.arange(0, 8.1, 0.25)
+ce = pd.concat([ce]*gamma_arr.size, ignore_index=True)
+ce['gamma'] = np.repeat(gamma_arr, isa_params.shape[0])
 
 search_args = list(itertools.product(ce.values[:, 0], ce.values[:, 1], ce.values[:, 2]))
 
