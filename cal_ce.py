@@ -54,7 +54,12 @@ def generate_consumption_process(income_bf_ret, sigma_perm_shock, sigma_tran_sho
     inc = np.multiply(inc_with_inc_risk, bern.T)
 
     # ISA
-    inc[:, :TERM] *= rho
+    try:
+        inc[:, :TERM] *= rho
+    except:
+        print('TERM: ', TERM)
+        print('rho: ', rho)
+        print(inc)
 
     ##################################################################################
     #                      COH_t+1 = (1 + R)*(COH_t - C_t) + Y_t+1                   #
