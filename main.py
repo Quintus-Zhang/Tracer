@@ -10,7 +10,11 @@ import multiprocessing as mp
 import itertools
 
 
-def run_model(TERM, rho, gamma):
+def run_model(TERMrho, gamma):
+
+    TERM = TERMrho[0]
+    rho = TERMrho[1]
+
     start = time.time()
     print(f'########## Term: {TERM} | Rho: {rho:.2f} | Gamma: {gamma} ##########')
 
@@ -77,11 +81,11 @@ sigma_tran = std.loc['sigma_transitory', 'Labor Income Only'][education_level[Al
 isa_params = pd.read_excel(isa_fp)
 ce = isa_params[["TERM FOR ISA", "1- rho"]].copy()
 
-gamma_arr = np.arange(0.1, 8.1, 0.25)
-ce = pd.concat([ce]*gamma_arr.size, ignore_index=True)
-ce['gamma'] = np.repeat(gamma_arr, isa_params.shape[0])
+gamma_arr = np.arange(0.25, 8.1, 0.25)
+ce_df = pd.concat([ce]*gamma_arr.size, ignore_index=True)
+ce_df['gamma'] = np.repeat(gamma_arr, isa_params.shape[0])
 
-search_args = list(itertools.product(ce.values[:, 0], ce.values[:, 1], ce.values[:, 2]))
+search_args = list(itertools.product(ce.values, gamma_arr))
 
 with mp.Pool(processes=mp.cpu_count()) as p:
     c_ce = p.starmap(run_model, search_args)
