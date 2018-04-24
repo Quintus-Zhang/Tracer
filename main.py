@@ -12,7 +12,7 @@ import itertools
 
 def run_model(TERMrho, gamma):
 
-    TERM = TERMrho[0]
+    TERM = int(TERMrho[0])
     rho = TERMrho[1]
 
     start = time.time()
