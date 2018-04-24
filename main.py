@@ -77,7 +77,7 @@ sigma_tran = std.loc['sigma_transitory', 'Labor Income Only'][education_level[Al
 isa_params = pd.read_excel(isa_fp)
 ce = isa_params[["TERM FOR ISA", "1- rho"]].copy()
 
-gamma_arr = np.arange(0, 8.1, 0.25)
+gamma_arr = np.arange(0.1, 8.1, 0.25)
 ce = pd.concat([ce]*gamma_arr.size, ignore_index=True)
 ce['gamma'] = np.repeat(gamma_arr, isa_params.shape[0])
 
