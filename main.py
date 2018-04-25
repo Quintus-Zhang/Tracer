@@ -43,7 +43,7 @@ def run_model(TERMrho, gamma):
 
     print(f"------ {time.time() - start} seconds ------")
     print(c_ce_arr.mean())
-    return c_ce_arr.mean()
+    return TERM, rho, gamma, c_ce_arr.mean()
 
 
 start_time = time.time()
@@ -75,24 +75,18 @@ income_ret = income_bf_ret[-1]
 sigma_perm = std.loc['sigma_permanent', 'Labor Income Only'][education_level[AltDeg]]
 sigma_tran = std.loc['sigma_transitory', 'Labor Income Only'][education_level[AltDeg]]
 
-
-
 # read isa params
 isa_params = pd.read_excel(isa_fp)
 isa_params = isa_params[["TERM FOR ISA", "1- rho"]].copy()
-
 gamma_arr = np.arange(0.25, 8.1, 0.25)
-ce_df = pd.concat([isa_params]*gamma_arr.size, ignore_index=True)
-ce_df['gamma'] = np.repeat(gamma_arr, isa_params.shape[0])
 
 search_args = list(itertools.product(isa_params.values, gamma_arr))
 
 with mp.Pool(processes=mp.cpu_count()) as p:
     c_ce = p.starmap(run_model, search_args)
 
-ce_df['Consumption CE'] = c_ce
-
-ce_df.to_excel(ce_fp)
+c_ce_df = pd.DataFrame(c_ce, columns=['Term', 'Rho', 'Gamma', 'Consumption CE'])
+c_ce_df.to_excel(ce_fp)
 
 
 # Params check
