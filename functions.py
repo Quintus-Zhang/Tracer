@@ -59,24 +59,6 @@ def read_input_data(income_fp, mortal_fp):
 
 
 def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight, age):
-    # ev = 0.0
-    # for j in range(3):
-    #     for k in range(3):
-    #         inc = inc_with_shk_tran[j] * exp_inc_shk_perm[k]
-    #
-    #         wealth = savings_incr + inc
-    #
-    #         wealth[wealth > grid_w[-1]] = grid_w[-1]
-    #         wealth[wealth < grid_w[0]] = grid_w[0]
-    #
-    #         spline = CubicSpline(grid_w, v, bc_type='natural')  # minimum curvature in both ends
-    #
-    #         v_w = spline(wealth)
-    #         temp = weight[j] * weight[k] * v_w
-    #         ev = ev + temp
-    # ev = ev / np.pi   # quadrature
-    # return ev
-
     ev_list = []
     for unemp_flag in [True, False]:
         ev = 0.0
@@ -84,9 +66,6 @@ def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight
             for k in range(3):
                 inc = inc_with_shk_tran[j] * exp_inc_shk_perm[k]
                 inc = inc * unemp_frac[AltDeg] if unemp_flag else inc         # theta
-
-                if age < START_AGE + TERM:
-                    inc *= rho
 
                 wealth = savings_incr + inc
 
@@ -119,19 +98,4 @@ def exp_val_r(inc, exp_inc_shk_perm, savings_incr, grid_w, v, weight):
         ev = ev + temp
     ev = ev / np.sqrt(np.pi)
     return ev
-
-
-# def exp_val_r(inc, savings_incr, grid_w, v):
-#     wealth = savings_incr + inc
-#
-#     wealth[wealth > grid_w[-1]] = grid_w[-1]
-#     wealth[wealth < grid_w[0]] = grid_w[0]
-#
-#     spline = CubicSpline(grid_w, v, bc_type='natural')
-#
-#     v_w = spline(wealth)
-#
-#     ev = v_w
-#     return ev
-
 

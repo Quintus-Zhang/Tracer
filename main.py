@@ -13,7 +13,7 @@ import itertools
 def run_model(gamma):
 
     start = time.time()
-    print(f'########## Term: {TERM} | Rho: {rho:.2f} | Gamma: {gamma} ##########')
+    print(f'########## Gamma: {gamma} ##########')
 
     # get conditional survival probabilities
     cond_prob = surv_prob.loc[START_AGE:END_AGE - 1, 'CSP']  # 22:99
@@ -22,7 +22,7 @@ def run_model(gamma):
     ###########################################################################
     #                  DP - generate consumption functions                    #
     ###########################################################################
-    c_func_fp = os.path.join(base_path, 'results', f'c function_{TERM}_{rho:.2f}_{gamma}.xlsx')
+    c_func_fp = os.path.join(base_path, 'results', f'c function_BSL_{gamma}.xlsx')
     c_func_df, _ = dp_solver(income_bf_ret, income_ret, sigma_perm, sigma_tran, cond_prob, gamma)
     c_func_df.to_excel(c_func_fp)
 
@@ -40,7 +40,7 @@ def run_model(gamma):
 
     print(f"------ {time.time() - start} seconds ------")
     print(c_ce_arr.mean())
-    return TERM, rho, gamma, c_ce_arr.mean()
+    return gamma, c_ce_arr.mean()
 
 
 start_time = time.time()
@@ -72,22 +72,12 @@ income_ret = income_bf_ret[-1]
 sigma_perm = std.loc['sigma_permanent', 'Labor Income Only'][education_level[AltDeg]]
 sigma_tran = std.loc['sigma_transitory', 'Labor Income Only'][education_level[AltDeg]]
 
-
-
-# # read isa params
-# isa_params = pd.read_excel(isa_fp)
-# isa_params = isa_params[["TERM FOR ISA", "1- rho"]].copy()
-
 gamma_arr = np.arange(0.25, 8.1, 0.25)
-# ce_df = pd.concat([isa_params]*gamma_arr.size, ignore_index=True)
-# ce_df['gamma'] = np.repeat(gamma_arr, isa_params.shape[0])
-#
-# search_args = list(itertools.product(isa_params.values, gamma_arr))
 
 with mp.Pool(processes=mp.cpu_count()) as p:
     c_ce = p.starmap(run_model, gamma_arr[None].T)
 
-c_ce_df = pd.DataFrame(c_ce, columns=['Term', 'Rho', 'Gamma', 'Consumption CE'])
+c_ce_df = pd.DataFrame(c_ce, columns=['Gamma', 'Consumption CE'])
 c_ce_df.to_excel(ce_fp)
 
 
