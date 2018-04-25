@@ -44,7 +44,7 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, GAMM
     #                         Dynamic Programming                             #
     ###########################################################################
     for t in range(END_AGE-START_AGE-1, -1, -1):       # t: 77 to 0 / t+22: 99 to 22
-        # print('############ Age: ', t+START_AGE, '#############')
+        print('############ Age: ', t+START_AGE, '#############')
         for i in range(N_W):
 
             # Grid Search: for each W in the grid_w, we search for the C which maximizes the V
