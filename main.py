@@ -50,7 +50,7 @@ if run_dp:
     c_func_df.to_excel(c_func_fp)
     # v.to_excel(v_func_fp)
 else:
-    c_func_fp = os.path.join(base_path, 'results', 'Iteration_8.xlsx')
+    c_func_fp = os.path.join(base_path, 'results', 'c function_' + education_level[AltDeg] + '.xlsx')
     c_func_df = pd.read_excel(c_func_fp)
 
 
@@ -60,26 +60,22 @@ else:
 c_proc_fp = os.path.join(base_path, 'results', 'c process_' + education_level[AltDeg] + '.xlsx')
 inc_proc_fp = os.path.join(base_path, 'results', 'inc process_' + education_level[AltDeg] + '.xlsx')
 
-c_ce_arr = np.zeros(N)
-for i in range(N):
-    c_proc, inc = generate_consumption_process(income_bf_ret, sigma_perm, sigma_tran, c_func_df, flag)
 
-    # c_proc = pd.DataFrame(c_proc)
-    # c_proc.to_excel(c_proc_fp, index=False)
+c_proc, inc = generate_consumption_process(income_bf_ret, sigma_perm, sigma_tran, c_func_df, flag)
 
-    # inc = pd.DataFrame(inc)
-    # inc.to_excel(inc_proc_fp, index=False)
+# c_proc = pd.DataFrame(c_proc)
+# c_proc.to_excel(c_proc_fp, index=False)
 
-    cond_prob = surv_prob.loc[START_AGE:END_AGE, 'CSP']
-    prob = cond_prob.cumprod().values
+# inc = pd.DataFrame(inc)
+# inc.to_excel(inc_proc_fp, index=False)
 
-    c_ce, _ = cal_certainty_equi(prob, c_proc)
-    c_ce_arr[i] = c_ce
-    print(c_ce)
+cond_prob = surv_prob.loc[START_AGE:END_AGE, 'CSP']
+prob = cond_prob.cumprod().values
+
+c_ce, _ = cal_certainty_equi(prob, c_proc)
+print(c_ce)
 
 # Params check
-print('STD:', c_ce_arr.std())
-print('Mean:', c_ce_arr.mean())
 print("--- %s seconds ---" % (time.time() - start_time))
 print('AltDeg: ', AltDeg)
 print('permanent shock: ', sigma_perm)
