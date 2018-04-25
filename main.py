@@ -40,7 +40,7 @@ def run_model(gamma):
 
     print(f"------ {time.time() - start} seconds ------")
     print(c_ce_arr.mean())
-    return TERM, rho, c_ce_arr.mean()
+    return TERM, rho, gamma, c_ce_arr.mean()
 
 
 start_time = time.time()
