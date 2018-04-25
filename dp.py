@@ -6,7 +6,7 @@ from functions import utility, exp_val, exp_val_r
 from constants import *
 
 
-def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, TERM, rho, GAMMA):
+def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, GAMMA):
     ###########################################################################
     #                                Setup                                    #
     ###########################################################################
@@ -61,7 +61,7 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, TERM
                                            grid_w, v[0, :], weights)
             else:
                 expected_value = exp_val(income_with_tran[:, t+1], np.exp(inc_shk_perm(t+1)),
-                                         savings_incr, grid_w, v[0, :], weights, t+START_AGE, TERM, rho)  # using Y_t+1 !
+                                         savings_incr, grid_w, v[0, :], weights, t+START_AGE)  # using Y_t+1 !
 
             try:
                 v_array = u_r + DELTA * prob[t] * expected_value    # v_array has size N_C-by-1
