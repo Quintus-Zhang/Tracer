@@ -2,6 +2,7 @@ from scipy.interpolate import CubicSpline
 import numpy as np
 import pandas as pd
 from constants import *
+import warnings
 
 ###########################################################################
 #                              Functions                                  #
@@ -9,10 +10,20 @@ from constants import *
 
 
 def utility(values, gamma):
+    # with warnings.catch_warnings():
+    #     warnings.filterwarnings('error')
+    #     try:
+    #         if gamma == 1:
+    #             return np.log(values)
+    #         else:
+    #             return values**(1-gamma) / (1-gamma)
+    #     except:
+    #         print(values)
+
     if gamma == 1:
         return np.log(values)
     else:
-        return values**(1-gamma) / (1-gamma)
+        return values ** (1 - gamma) / (1 - gamma)
 
 
 def cal_income(coeffs):

@@ -87,7 +87,7 @@ gamma_arr = np.arange(0.25, 8.1, 0.25)
 with mp.Pool(processes=mp.cpu_count()) as p:
     c_ce = p.starmap(run_model, gamma_arr[None].T)
 
-c_ce_df = pd.DataFrame(c_ce, columns=['Term', 'Rho', 'Consumption CE'])
+c_ce_df = pd.DataFrame(c_ce, columns=['Term', 'Rho', 'Gamma', 'Consumption CE'])
 c_ce_df.to_excel(ce_fp)
 
 
