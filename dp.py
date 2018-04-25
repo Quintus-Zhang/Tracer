@@ -48,11 +48,11 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, TERM
         for i in range(N_W):
 
             # Grid Search: for each W in the grid_w, we search for the C which maximizes the V
-            consmp = np.linspace(0, grid_w[i], N_C)
+            consmp = np.linspace(0.1, grid_w[i], N_C)
             u_r = utility(consmp, GAMMA)
             u_r = u_r[None].T
 
-            savings = grid_w[i] - np.linspace(0, grid_w[i], N_C)
+            savings = grid_w[i] - consmp
             savings_incr = savings * (1 + R)
             savings_incr = savings_incr[None].T
 
