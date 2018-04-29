@@ -23,7 +23,7 @@ def c_func(c_df, w, age):
     return c
 
 
-def generate_consumption_process(income_bf_ret, sigma_perm_shock, sigma_tran_shock, c_func_df, flag):
+def generate_consumption_process(income_bf_ret, sigma_perm_shock, sigma_tran_shock, c_func_df, *, flag='orig'):
     """ Calculating the certainty equivalent annual consumption and life time wealth"""
 
     YEARS = END_AGE - START_AGE + 1

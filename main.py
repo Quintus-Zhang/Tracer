@@ -46,7 +46,7 @@ cond_prob = cond_prob.values
 if run_dp:
     c_func_fp = os.path.join(base_path, 'results', 'c function_' + education_level[AltDeg] + '.xlsx')
     # v_func_fp = os.path.join(base_path, 'results', 'v function_' + education_level[AltDeg] + '.xlsx')
-    c_func_df, v = dp_solver(income_bf_ret, income_ret, sigma_perm, sigma_tran, cond_prob, flag)
+    c_func_df, v = dp_solver(income_bf_ret, income_ret, sigma_perm, sigma_tran, cond_prob, flag='orig')
     c_func_df.to_excel(c_func_fp)
     # v.to_excel(v_func_fp)
 else:
@@ -61,7 +61,7 @@ c_proc_fp = os.path.join(base_path, 'results', 'c process_' + education_level[Al
 inc_proc_fp = os.path.join(base_path, 'results', 'inc process_' + education_level[AltDeg] + '.xlsx')
 
 
-c_proc, inc = generate_consumption_process(income_bf_ret, sigma_perm, sigma_tran, c_func_df, flag)
+c_proc, inc = generate_consumption_process(income_bf_ret, sigma_perm, sigma_tran, c_func_df, flag='oirg')
 
 # c_proc = pd.DataFrame(c_proc)
 # c_proc.to_excel(c_proc_fp, index=False)

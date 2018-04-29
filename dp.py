@@ -6,7 +6,7 @@ from functions import *
 from constants import *
 
 
-def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, flag):
+def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, *, flag='orig'):
     ###########################################################################
     #                                Setup                                    #
     ###########################################################################
