@@ -8,18 +8,20 @@ from constants import *
 ###########################################################################
 
 
-def utility(values, gamma):
+def utility(C, gamma):
     """ Constant Relative Risk Aversion - Utility Function
 
-    :param values: array or scalar, consumption
+    :param C: array or scalar, consumption
     :param gamma: scalar, risk preference parameter
-    :return: array or scalar, utiliy
+    :return: array or scalar, utility
     """
     if gamma == 1:
-        return np.log(values)
+        return np.log(C)   # TODO: add try-except block to catch the error
     else:
-        with np.errstate(divide='ignore'):
-            return values**(1-gamma) / (1-gamma)
+        try:
+            return C**(1-gamma) / (1-gamma)
+        except ZeroDivisionError as e:
+            raise ValueError('Consumption cannot be zero.') from e
 
 
 def cal_income(coeffs):
