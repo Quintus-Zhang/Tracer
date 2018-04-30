@@ -4,10 +4,10 @@ import pandas as pd
 from numpy.polynomial.hermite import hermgauss
 import time
 from functions import *
-from constants import START_AGE, END_AGE, RETIRE_AGE, N_W, UPPER_BOUND_W, N_C, GAMMA, R, DELTA, LOWER_BOUND_W, EXPAND_FAC, LOWER_BOUND_C
+from constants import *
 
 
-def dp_solver(Y, prob):
+def dp_solver(Y, prob, GAMMA):
     ###########################################################################
     #                                Setup                                    #
     ###########################################################################
