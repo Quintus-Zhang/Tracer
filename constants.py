@@ -19,7 +19,7 @@ INIT_WEALTH = 0
 
 AltDeg = 4
 run_dp = True
-N = 50
+N = 20
 
 education_level = {
     1: 'No High School',
