@@ -11,7 +11,6 @@ import cProfile
 
 start_time = time.time()
 
-# TODO: test if std of simulated utility decrease as the number of simulations increase
 ###########################################################################
 #                      Setup - file path & raw data                       #
 ###########################################################################
@@ -35,9 +34,7 @@ income_bf_ret = cal_income(age_coeff)
 sigma_perm = std.loc['sigma_permanent', 'Labor Income Only'][education_level[AltDeg]]
 sigma_tran = std.loc['sigma_transitory', 'Labor Income Only'][education_level[AltDeg]]
 
-
 adj_income = adj_income_process(income_bf_ret, sigma_perm, sigma_tran)
-
 
 # get conditional survival probabilities
 cond_prob = surv_prob.loc[START_AGE:END_AGE - 1, 'CSP']  # 22:99
@@ -47,8 +44,8 @@ cond_prob = cond_prob.values
 ###########################################################################
 #                  DP - generate consumption functions                    #
 ###########################################################################
-prof = cProfile.Profile()
-prof.enable()
+# prof = cProfile.Profile()
+# prof.enable()
 
 if run_dp:
     c_func_fp = os.path.join(base_path, 'results', 'c function_' + education_level[AltDeg] + '.xlsx')
@@ -60,8 +57,8 @@ else:
     c_func_fp = os.path.join(base_path, 'results', 'Iteration_15.xlsx')
     c_func_df = pd.read_excel(c_func_fp)
 
-prof.disable()
-prof.dump_stats(os.path.join(base_path, 'results', f'prof.stats'))
+# prof.disable()
+# prof.dump_stats(os.path.join(base_path, 'results', f'prof.stats'))
 
 
 ###########################################################################
@@ -74,19 +71,6 @@ c_ce_arr = np.zeros(N)
 for i in range(N):
     adj_income = adj_income_process(income_bf_ret, sigma_perm, sigma_tran)
     c_proc, inc = generate_consumption_process(adj_income, c_func_df)
-
-    # c_proc = pd.DataFrame(c_proc)
-    # c_proc.to_excel(c_proc_fp, index=False)
-
-    # inc = pd.DataFrame(inc)
-    # inc.to_excel(inc_proc_fp, index=False)
-
-    # plt.figure()
-    # plt.plot(c_proc[:100, :])
-    # plt.show()
-    # f = (c_proc == 3000000)
-    # g = f.sum(axis=1) > 0
-    # print(g.sum())
 
     cond_prob = surv_prob.loc[START_AGE:END_AGE, 'CSP']
     prob = cond_prob.cumprod().values
