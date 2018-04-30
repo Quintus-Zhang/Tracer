@@ -44,6 +44,7 @@ def run_model(gamma):
 
     print(f"------ {time.time() - start} seconds ------")
     print(c_ce_arr.mean())
+    print(c_ce_arr.std())
     return gamma, c_ce_arr.mean()
 
 
