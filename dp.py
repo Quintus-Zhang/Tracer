@@ -21,8 +21,15 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, TERM
     income_with_tran = np.exp(inc_shk_tran) * income
 
     # construct grids
-    even_grid = np.linspace(0, 1, N_W)
-    grid_w = LOWER_BOUND_W + (UPPER_BOUND_W - LOWER_BOUND_W) * even_grid**EXPAND_FAC
+
+    # # power expanding grid
+    # even_grid = np.linspace(0, 1, N_W)
+    # grid_w = LOWER_BOUND_W + (UPPER_BOUND_W - LOWER_BOUND_W) * even_grid**EXPAND_FAC
+
+    # exponential expanding grid
+    even_grid = np.linspace(0, np.log(UPPER_BOUND_W - LOWER_BOUND_W + 1), N_W)
+    grid_w = LOWER_BOUND_W + (np.exp(even_grid) - 1)
+
 
     # initialize arrays for value function and consumption
     v = np.zeros((2, N_W))
@@ -48,9 +55,9 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, TERM
         for i in range(N_W):
 
             # Grid Search: for each W in the grid_w, we search for the C which maximizes the V
-            # consmp = np.linspace(0.1, grid_w[i], N_C)
-            even_grid = np.linspace(0, 1, N_C)
-            consmp = LOWER_BOUND_C + (grid_w[i] - LOWER_BOUND_C) * even_grid ** EXPAND_FAC
+            consmp = np.linspace(0.1, grid_w[i], N_C)
+            # even_grid = np.linspace(0, 1, N_C)
+            # consmp = LOWER_BOUND_C + (grid_w[i] - LOWER_BOUND_C) * even_grid ** EXPAND_FAC
 
             u_r = utility(consmp, GAMMA)
             u_r = u_r[None].T
