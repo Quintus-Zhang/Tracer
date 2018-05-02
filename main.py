@@ -93,7 +93,7 @@ c_ce_df.to_excel(ce_fp)
 # Params check
 # print('STD:', c_ce_arr.std())
 # print('Mean:', c_ce_arr.mean())
-print("--- %s mins ---" % (time.time() - start_time)/60 )
+print("--- %s seconds ---" % (time.time() - start_time))
 print('AltDeg: ', AltDeg)
 print('permanent shock: ', sigma_perm)
 print('transitory shock: ', sigma_tran)
