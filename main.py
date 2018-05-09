@@ -32,18 +32,18 @@ def run_model(TERMrho, gamma):
     ###########################################################################
     #        CE - calculate consumption process & certainty equivalent        #
     ###########################################################################
-    c_ce_arr = np.zeros(N)
-    for i in range(N):
-        c_proc, _ = generate_consumption_process(income_bf_ret, sigma_perm, sigma_tran, c_func_df, TERM, rho)
+    # c_ce_arr = np.zeros(N)
+    # for i in range(N):
+    c_proc, _ = generate_consumption_process(income_bf_ret, sigma_perm, sigma_tran, c_func_df, TERM, rho)
 
-        prob = surv_prob.loc[START_AGE:END_AGE, 'CSP'].cumprod().values
+    prob = surv_prob.loc[START_AGE:END_AGE, 'CSP'].cumprod().values
 
-        c_ce, _ = cal_certainty_equi(prob, c_proc, gamma)
-        c_ce_arr[i] = c_ce
+    c_ce, _ = cal_certainty_equi(prob, c_proc, gamma)
+        # c_ce_arr[i] = c_ce
 
     print(f"------ {time.time() - start} seconds ------")
-    print(c_ce_arr.mean())
-    return TERM, rho, gamma, c_ce_arr.mean()
+    print(c_ce)
+    return TERM, rho, gamma, c_ce
 
 
 start_time = time.time()
@@ -78,7 +78,7 @@ sigma_tran = std.loc['sigma_transitory', 'Labor Income Only'][education_level[Al
 # read isa params
 isa_params = pd.read_excel(isa_fp)
 isa_params = isa_params[["Term", "1-rho"]].copy()
-isa_params = isa_params[isa_params['Term']==15].copy()
+isa_params = isa_params[isa_params['Term']==10].copy()
 gamma_arr = [4]  # np.arange(4, 8.1, 1)
 
 search_args = list(itertools.product(isa_params.values, gamma_arr))
