@@ -67,21 +67,17 @@ else:
 c_proc_fp = os.path.join(base_path, 'results', 'c process_' + education_level[AltDeg] + '.xlsx')
 inc_proc_fp = os.path.join(base_path, 'results', 'inc process_' + education_level[AltDeg] + '.xlsx')
 
-c_ce_arr = np.zeros(N)
-for i in range(N):
-    adj_income = adj_income_process(income_bf_ret, sigma_perm, sigma_tran)
-    c_proc, inc = generate_consumption_process(adj_income, c_func_df)
+adj_income = adj_income_process(income_bf_ret, sigma_perm, sigma_tran)
+c_proc, inc = generate_consumption_process(adj_income, c_func_df)
 
-    cond_prob = surv_prob.loc[START_AGE:END_AGE, 'CSP']
-    prob = cond_prob.cumprod().values
+cond_prob = surv_prob.loc[START_AGE:END_AGE, 'CSP']
+prob = cond_prob.cumprod().values
 
-    c_ce, _ = cal_certainty_equi(prob, c_proc)
-    c_ce_arr[i] = c_ce
-    print(c_ce)
+c_ce, _ = cal_certainty_equi(prob, c_proc)
+
 
 # Params check
-print('STD:', c_ce_arr.std())
-print('Mean:', c_ce_arr.mean())
+print('Mean:', c_ce)
 print("--- %s seconds ---" % (time.time() - start_time))
 print('AltDeg: ', AltDeg)
 print('permanent shock: ', sigma_perm)

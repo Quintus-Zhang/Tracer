@@ -40,11 +40,11 @@ def dp_solver(Y, prob):
         start_time = time.time()
         for i in range(N_W):
             print('wealth_grid_progress: ', i / N_W * 100)
-            consmp = np.linspace(0, grid_w[i], N_C)
+            consmp = np.linspace(LOWER_BOUND_C, grid_w[i], N_C)
             u_r = utility(consmp, GAMMA)
             u_r = u_r[None].T
 
-            savings = grid_w[i] - np.linspace(0, grid_w[i], N_C)
+            savings = grid_w[i] - consmp
             savings_incr = savings * (1 + R)
             savings_incr = savings_incr[None].T
 
