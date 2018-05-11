@@ -1,4 +1,4 @@
-from scipy.interpolate import CubicSpline
+from scipy.interpolate import CubicSpline, interp1d
 import pandas as pd
 import os
 import numpy as np
@@ -13,13 +13,20 @@ def c_func(c_df, w, age):
     """ Given the consumption functions and wealth at certain age, return the corresponding consumption """
     w = np.where(w < UPPER_BOUND_W, w, UPPER_BOUND_W)
     w = np.where(w > 1, w, 1)
-    spline = CubicSpline(c_df[str(END_AGE)], c_df[str(age)], bc_type='natural')
-    c = spline(w)
-    # set coeffs of 2nd and 3rd order term to 0, 1st order term to the slope between the first two points
-    if any(c < 0):
-        spline.c[:2, 0] = 0
-        spline.c[2, 0] = (c_df.loc[1, str(age)] - c_df.loc[0, str(age)]) / (c_df.loc[1, str(END_AGE)] - c_df.loc[0, str(END_AGE)])
-    c = spline(w)
+
+    # # using cubic spline
+    # spline = CubicSpline(c_df[str(END_AGE)], c_df[str(age)], bc_type='natural')
+    # c = spline(w)
+    # # set coeffs of 2nd and 3rd order term to 0, 1st order term to the slope between the first two points
+    # if any(c < 0):
+    #     spline.c[:2, 0] = 0
+    #     spline.c[2, 0] = (c_df.loc[1, str(age)] - c_df.loc[0, str(age)]) / (c_df.loc[1, str(END_AGE)] - c_df.loc[0, str(END_AGE)])
+    # c = spline(w)
+
+    # using linear interpolation
+    linear_interp = interp1d(c_df[str(END_AGE)], c_df[str(age)], kind='linear')
+    c = linear_interp(w)
+
     return c
 
 
