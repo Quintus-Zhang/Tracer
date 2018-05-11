@@ -10,11 +10,33 @@ import multiprocessing as mp
 ###########################################################################
 
 
-def utility(values, gamma):
+def utility_proxy(C, gamma):
+    """ Constant Relative Risk Aversion - Utility Function
+    :param C: array or scalar, consumption
+    :param gamma: scalar, risk preference parameter
+    :return: array or scalar, utility
+    """
     if gamma == 1:
-        return np.log(values)
+        return np.log(C)   # TODO: add try-except block to catch the error
     else:
-        return values**(1-gamma) / (1-gamma)
+        try:
+            return C**(1-gamma)
+        except ZeroDivisionError as e:
+            raise ValueError('Consumption cannot be zero.') from e
+
+def utility(C, gamma):
+    """ Constant Relative Risk Aversion - Utility Function
+    :param C: array or scalar, consumption
+    :param gamma: scalar, risk preference parameter
+    :return: array or scalar, utility
+    """
+    if gamma == 1:
+        return np.log(C)   # TODO: add try-except block to catch the error
+    else:
+        try:
+            return C**(1-gamma) / (1-gamma)
+        except ZeroDivisionError as e:
+            raise ValueError('Consumption cannot be zero.') from e
 
 
 def cal_income(coeffs):
@@ -76,28 +98,28 @@ def adj_income_process(income, sigma_perm, sigma_tran):
     bern = np.append(r, ones, axis=0)
     Y = np.multiply(inc_with_inc_risk, bern.T)
 
-    # adjust income with debt repayment
-    D = np.zeros(Y.shape)
-    D[:, 0] = INIT_DEBT
-    P = np.zeros(Y.shape)
+    # # adjust income with debt repayment
+    # D = np.zeros(Y.shape)
+    # D[:, 0] = INIT_DEBT
+    # P = np.zeros(Y.shape)
+    #
+    # for t in range(END_AGE - START_AGE):
+    #     cond1 = np.logical_and(Y[:, t] >= 2 * P_BAR, D[:, t] >= P_BAR)
+    #     cond2 = np.logical_and(Y[:, t] >= 2 * D[:, t], D[:, t] < P_BAR)
+    #     cond3 = np.logical_and(Y[:, t] < 2 * P_BAR, D[:, t] >= P_BAR)
+    #     cond4 = np.logical_and(Y[:, t] < 2 * D[:, t], D[:, t] < P_BAR)
+    #
+    #     P[cond1, t] = P_BAR
+    #     P[cond2, t] = D[cond2, t]
+    #     P[cond3, t] = Y[cond3, t] / 2
+    #     P[cond4, t] = Y[cond4, t] / 2
+    #
+    #     D[:, t + 1] = D[:, t] * (1 + rate) - P[:, t]
+    # adj_Y = Y - P
 
-    for t in range(END_AGE - START_AGE):
-        cond1 = np.logical_and(Y[:, t] >= 2 * P_BAR, D[:, t] >= P_BAR)
-        cond2 = np.logical_and(Y[:, t] >= 2 * D[:, t], D[:, t] < P_BAR)
-        cond3 = np.logical_and(Y[:, t] < 2 * P_BAR, D[:, t] >= P_BAR)
-        cond4 = np.logical_and(Y[:, t] < 2 * D[:, t], D[:, t] < P_BAR)
-
-        P[cond1, t] = P_BAR
-        P[cond2, t] = D[cond2, t]
-        P[cond3, t] = Y[cond3, t] / 2
-        P[cond4, t] = Y[cond4, t] / 2
-
-        D[:, t + 1] = D[:, t] * (1 + rate) - P[:, t]
-    adj_Y = Y - P
-
-    # # adjust income with ISA
-    # adj_Y = Y
-    # adj_Y[:, :TERM] *= rho
+    # adjust income with ISA
+    adj_Y = Y
+    adj_Y[:, :TERM] *= rho
 
     return adj_Y
 
@@ -116,6 +138,8 @@ def exp_val_new(y, savings_incr, grid_w, v):
     p = mp.Pool(processes=mp.cpu_count())
     v_w = p.apply(spline, args=(COH,))
     p.close()
+
+    v_w = v_w**(1-GAMMA)
 
     # for i in range(N_SIM):
     #     v_w[i, :] = spline(COH[i, :])
