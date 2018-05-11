@@ -7,9 +7,9 @@ RETIRE_AGE = 65           # retirement age
 N_W = 501
 LOWER_BOUND_W = 1         # lower bound of wealth
 UPPER_BOUND_W = 15000000    # upper bound of wealth
-EXPAND_FAC = 3
+EXPAND_FAC = 5
 N_C = 1501
-LOWER_BOUND_C = 0
+LOWER_BOUND_C = 0.1
 # GAMMA = 6.5                 # risk preference parameter
 R = 0.02                  # risk-free rate
 DELTA = 0.99              # discount factor
@@ -17,9 +17,8 @@ MU = 0                    # expectation of income shocks
 N_SIM = 100000            # number of draws
 INIT_WEALTH = 0
 
-AltDeg = 2
+AltDeg = 4
 run_dp = True
-N = 50
 
 education_level = {
     1: 'No High School',
@@ -47,6 +46,3 @@ unempl_rate = {
     2: 0.1438,
     4: 0.0738 # 10**(-5),  # 0.0738,
 }
-
-# TERM = 10
-# rho = 0.89055403

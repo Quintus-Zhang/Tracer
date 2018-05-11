@@ -13,7 +13,6 @@ import itertools
 def run_model(gamma):
 
     start = time.time()
-    print(f'########## Gamma: {gamma} ##########')
 
     # get conditional survival probabilities
     cond_prob = surv_prob.loc[START_AGE:END_AGE - 1, 'CSP']  # 22:99
@@ -23,25 +22,21 @@ def run_model(gamma):
     #                  DP - generate consumption functions                    #
     ###########################################################################
     c_func_fp = os.path.join(base_path, 'results', f'c function_BSL_{gamma}.xlsx')
-    c_func_df, _ = dp_solver(income_bf_ret, income_ret, sigma_perm, sigma_tran, cond_prob, gamma)
+    v_func_fp = os.path.join(base_path, 'results', f'v function_BSL_{gamma}.xlsx')
+    c_func_df, v_func_df = dp_solver(income_bf_ret, income_ret, sigma_perm, sigma_tran, cond_prob, gamma)
     c_func_df.to_excel(c_func_fp)
+    v_func_df.to_excel(v_func_fp)
 
     ###########################################################################
     #        CE - calculate consumption process & certainty equivalent        #
     ###########################################################################
-    c_ce_arr = np.zeros(N)
-    for i in range(N):
-        c_proc, _ = generate_consumption_process(income_bf_ret, sigma_perm, sigma_tran, c_func_df)
+    c_proc, _ = generate_consumption_process(income_bf_ret, sigma_perm, sigma_tran, c_func_df)
+    prob = surv_prob.loc[START_AGE:END_AGE, 'CSP'].cumprod().values
+    c_ce, _ = cal_certainty_equi(prob, c_proc, gamma)
 
-        prob = surv_prob.loc[START_AGE:END_AGE, 'CSP'].cumprod().values
-
-        c_ce, _ = cal_certainty_equi(prob, c_proc, gamma)
-        c_ce_arr[i] = c_ce
-
+    print(f'########## Gamma: {gamma} | CE: {c_ce} ##########')
     print(f"------ {time.time() - start} seconds ------")
-    print(c_ce_arr.mean())
-    return gamma, c_ce_arr.mean()
-
+    return gamma, c_ce
 
 start_time = time.time()
 
@@ -72,7 +67,7 @@ income_ret = income_bf_ret[-1]
 sigma_perm = std.loc['sigma_permanent', 'Labor Income Only'][education_level[AltDeg]]
 sigma_tran = std.loc['sigma_transitory', 'Labor Income Only'][education_level[AltDeg]]
 
-gamma_arr = np.arange(0.25, 4.1, 0.25)
+gamma_arr = np.arange(5, 8.1, 1)
 
 with mp.Pool(processes=mp.cpu_count()) as p:
     c_ce = p.starmap(run_model, gamma_arr[None].T)
@@ -82,8 +77,6 @@ c_ce_df.to_excel(ce_fp)
 
 
 # Params check
-# print('STD:', c_ce_arr.std())
-# print('Mean:', c_ce_arr.mean())
 print("--- %s seconds ---" % (time.time() - start_time))
 print('AltDeg: ', AltDeg)
 print('permanent shock: ', sigma_perm)
@@ -92,5 +85,5 @@ print('lambda: ', ret_frac[AltDeg])
 print('theta: ',  unemp_frac[AltDeg])
 print('pi: ', unempl_rate[AltDeg])
 print('W0: ', INIT_WEALTH)
-
+print('Expanding Factor: ', EXPAND_FAC)
 
