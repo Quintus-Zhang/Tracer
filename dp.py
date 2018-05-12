@@ -51,13 +51,13 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, TERM
     #                         Dynamic Programming                             #
     ###########################################################################
     for t in range(END_AGE-START_AGE-1, -1, -1):       # t: 77 to 0 / t+22: 99 to 22
-        # print('############ Age: ', t+START_AGE, '#############')
+        print('############ Age: ', t+START_AGE, '#############')
         for i in range(N_W):
 
             # Grid Search: for each W in the grid_w, we search for the C which maximizes the V
-            # consmp = np.linspace(0.1, grid_w[i], N_C)
-            even_grid = np.linspace(0, 1, N_C)
-            consmp = LOWER_BOUND_C + (grid_w[i] - LOWER_BOUND_C) * even_grid ** EXPAND_FAC
+            consmp = np.linspace(0.1, grid_w[i], N_C)
+            # even_grid = np.linspace(0, 1, N_C)
+            # consmp = LOWER_BOUND_C + (grid_w[i] - LOWER_BOUND_C) * even_grid ** EXPAND_FAC
 
             u_r = utility(consmp, GAMMA)
             u_r = u_r[None].T
