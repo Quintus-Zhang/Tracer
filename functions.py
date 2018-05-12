@@ -94,6 +94,7 @@ def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight
                 inc = inc_with_shk_tran[j] * exp_inc_shk_perm[k]
                 inc = inc * unemp_frac[AltDeg] if unemp_flag else inc         # theta
 
+                # MARK: ISA
                 if age < START_AGE + TERM:
                     if flag == 'rho':
                         inc *= rho

@@ -52,7 +52,7 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, *, f
             u_r = utility(consmp, GAMMA)
             u_r = u_r[None].T
 
-            savings = grid_w[i] - np.linspace(0, grid_w[i], N_C)
+            savings = grid_w[i] - consmp
             savings_incr = savings * (1 + R)
             savings_incr = savings_incr[None].T
 

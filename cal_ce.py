@@ -59,7 +59,7 @@ def generate_consumption_process(income_bf_ret, sigma_perm_shock, sigma_tran_sho
 
     inc = np.multiply(inc_with_inc_risk, bern.T)
 
-    # ISA, Loan or orig
+    # ISA, Loan or orig / MARK: ISA
     if flag == 'rho':
         inc[:, :TERM] *= rho
     elif flag == 'ppt':
