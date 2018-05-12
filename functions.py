@@ -133,14 +133,14 @@ def exp_val_new(y, savings_incr, grid_w, v):
     COH[COH > grid_w[-1]] = grid_w[-1]
     COH[COH < grid_w[0]] = grid_w[0]
 
-    # # using cubic spline interpolation
-    # spline = CubicSpline(grid_w, v, bc_type='natural')  # minimum curvature in both ends
+    # using cubic spline interpolation
+    spline = CubicSpline(grid_w, v, bc_type='natural')  # minimum curvature in both ends
 
-    # using piecewise linear interpolation
-    linear_interp = interp1d(grid_w, v, kind='linear')
+    # # using piecewise linear interpolation
+    # linear_interp = interp1d(grid_w, v, kind='linear')
 
     p = mp.Pool(processes=mp.cpu_count())
-    v_w = p.apply(linear_interp, args=(COH,))
+    v_w = p.apply(spline, args=(COH,))
     p.close()
 
     v_w = v_w**(1-GAMMA)  # MARK: Transformation
