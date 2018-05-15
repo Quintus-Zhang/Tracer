@@ -25,8 +25,10 @@ def run_model(TERMrho, gamma):
     #                  DP - generate consumption functions                    #
     ###########################################################################
     c_func_fp = os.path.join(base_path, 'results', f'c function_{TERM}_{rho:.2f}_{gamma}.xlsx')
-    c_func_df, _ = dp_solver(income_bf_ret, income_ret, sigma_perm, sigma_tran, cond_prob, TERM, rho, gamma)
+    v_func_fp = os.path.join(base_path, 'results', f'v function_{TERM}_{rho:.2f}_{gamma}.xlsx')
+    c_func_df, v_func_df = dp_solver(income_bf_ret, income_ret, sigma_perm, sigma_tran, cond_prob, TERM, rho, gamma)
     c_func_df.to_excel(c_func_fp)
+    v_func_df.to_excel(v_func_fp)
 
     ###########################################################################
     #        CE - calculate consumption process & certainty equivalent        #
