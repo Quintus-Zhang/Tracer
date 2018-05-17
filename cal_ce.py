@@ -4,9 +4,7 @@ import os
 import numpy as np
 from functions import utility
 from constants import *
-from scipy.stats import bernoulli
-import matplotlib.pyplot as plt
-import sys
+
 
 # policy functions: C_t(W_t)
 def c_func(c_df, w, age):
