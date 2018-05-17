@@ -39,7 +39,7 @@ def run_model(TERMrho, gamma):
 
     c_ce, _ = cal_certainty_equi(prob, c_proc, gamma)
 
-    print(f'########## Term: {TERM} | Rho: {rho:.2f} | Gamma: {gamma} | CE: {c_ce} ##########')
+    print(f'########## Term: {TERM} | Rho: {rho:.2f} | Gamma: {gamma} | Exp_Frac: {gamma_exp_frac[gamma]} | CE: {c_ce:.2f} ##########')
     print(f"------ {time.time() - start} seconds ------")
     return TERM, rho, gamma, c_ce
 
@@ -52,7 +52,7 @@ start_time = time.time()
 # set file path
 income_fn = 'age_coefficients_and_var.xlsx'
 surviv_fn = 'Conditional Survival Prob Feb 16.xlsx'
-isa_fn = 'Loop on term and rho.xlsx'
+isa_fn = 'Loop on term and rho +.xlsx'
 base_path = os.path.dirname(__file__)
 income_fp = os.path.join(base_path, 'data', income_fn)
 mortal_fp = os.path.join(base_path, 'data', surviv_fn)
@@ -76,8 +76,9 @@ sigma_tran = std.loc['sigma_transitory', 'Labor Income Only'][education_level[Al
 # read isa params
 isa_params = pd.read_excel(isa_fp)
 isa_params = isa_params[["Term", "1-rho"]].copy()
-isa_params = isa_params[isa_params['Term']==15].copy()
-gamma_arr = [4]  # np.arange(4, 8.1, 1)
+# isa_params = isa_params[isa_params['Term']==15].copy()
+# isa_params = isa_params.iloc[7:9, :]
+gamma_arr = np.arange(1, 8.1, 1)
 
 search_args = list(itertools.product(isa_params.values, gamma_arr))
 
