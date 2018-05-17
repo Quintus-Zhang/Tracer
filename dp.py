@@ -55,7 +55,7 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, TERM
         for i in range(N_W):
 
             # Grid Search: for each W in the grid_w, we search for the C which maximizes the V
-            consmp = np.linspace(0.1, grid_w[i], N_C)
+            consmp = np.linspace(LOWER_BOUND_C, grid_w[i], N_C)
             # even_grid = np.linspace(0, 1, N_C)
             # consmp = LOWER_BOUND_C + (grid_w[i] - LOWER_BOUND_C) * even_grid ** EXPAND_FAC
 

@@ -1,4 +1,4 @@
-from scipy.interpolate import CubicSpline
+from scipy.interpolate import CubicSpline, interp1d
 import numpy as np
 import pandas as pd
 from constants import *
@@ -87,10 +87,20 @@ def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight
                 wealth[wealth > grid_w[-1]] = grid_w[-1]
                 wealth[wealth < grid_w[0]] = grid_w[0]
 
-                spline = CubicSpline(grid_w, v, bc_type='natural')  # minimum curvature in both ends
+                # log transformation
+                log_grid_w = np.log(grid_w)
+                log_v = np.log(v + 100)
+                log_wealth = np.log(wealth)
 
-                v_w = spline(wealth)
-                temp = weight[j] * weight[k] * v_w
+                # spline = CubicSpline(log_grid_w, log_v, bc_type='natural')
+                spline = interp1d(log_grid_w, log_v, kind='linear')
+                log_v_w = spline(log_wealth)
+                temp = weight[j] * weight[k] * (np.exp(log_v_w) - 100)
+
+                # spline = CubicSpline(grid_w, v, bc_type='natural')  # minimum curvature in both ends
+                #
+                # v_w = spline(wealth)
+                # temp = weight[j] * weight[k] * v_w
                 ev = ev + temp
         ev = ev / np.pi   # quadrature
         ev_list.append(ev)
@@ -106,10 +116,20 @@ def exp_val_r(inc, exp_inc_shk_perm, savings_incr, grid_w, v, weight):
         wealth[wealth > grid_w[-1]] = grid_w[-1]
         wealth[wealth < grid_w[0]] = grid_w[0]
 
-        spline = CubicSpline(grid_w, v, bc_type='natural')
+        # log transformation
+        log_grid_w = np.log(grid_w)
+        log_v = np.log(v + 100)
+        log_wealth = np.log(wealth)
 
-        v_w = spline(wealth)
-        temp = weight[k] * v_w
+        # spline = CubicSpline(log_grid_w, log_v, bc_type='natural')
+        spline = interp1d(log_grid_w, log_v, kind='linear')
+        log_v_w = spline(log_wealth)
+        temp = weight[k] * (np.exp(log_v_w) - 100)
+
+        # spline = CubicSpline(grid_w, v, bc_type='natural')
+        #
+        # v_w = spline(wealth)
+        # temp = weight[k] * v_w
         ev = ev + temp
     ev = ev / np.sqrt(np.pi)
     return ev
