@@ -76,6 +76,7 @@ sigma_tran = std.loc['sigma_transitory', 'Labor Income Only'][education_level[Al
 # read isa params
 isa_params = pd.read_excel(isa_fp)
 isa_params = isa_params[["Term", "1-rho"]].copy()
+isa_params = isa_params.loc[isa_params['1-rho'] > 0.5]
 # isa_params = isa_params[isa_params['Term']==15].copy()
 # isa_params = isa_params.iloc[7:9, :]
 gamma_arr = np.arange(1, 8.1, 1)
