@@ -6,8 +6,7 @@ from functions import read_input_data, cal_income, adj_income_process
 from dp import dp_solver
 from cal_ce import cal_certainty_equi, generate_consumption_process
 from constants import *
-import matplotlib.pyplot as plt
-import cProfile
+
 
 start_time = time.time()
 
@@ -52,7 +51,7 @@ if run_dp:
     v_func_fp = os.path.join(base_path, 'results', 'v function_' + education_level[AltDeg] + '.xlsx')
     c_func_df, v = dp_solver(adj_income, cond_prob)
     c_func_df.to_excel(c_func_fp)
-    # v.to_excel(v_func_fp)
+    v.to_excel(v_func_fp)
 else:
     c_func_fp = os.path.join(base_path, 'results', 'Iteration_15.xlsx')
     c_func_df = pd.read_excel(c_func_fp)
