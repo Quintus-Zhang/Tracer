@@ -1,4 +1,4 @@
-from scipy.interpolate import CubicSpline
+from scipy.interpolate import CubicSpline, interp1d
 from scipy.stats import bernoulli
 import numpy as np
 import pandas as pd
@@ -9,12 +9,33 @@ import multiprocessing as mp
 #                              Functions                                  #
 ###########################################################################
 
-
-def utility(values, gamma):
+def utility_proxy(C, gamma):
+    """ Constant Relative Risk Aversion - Utility Function
+    :param C: array or scalar, consumption
+    :param gamma: scalar, risk preference parameter
+    :return: array or scalar, utility
+    """
     if gamma == 1:
-        return np.log(values)
+        return np.log(C)   # TODO: add try-except block to catch the error
     else:
-        return values**(1-gamma) / (1-gamma)
+        try:
+            return C**(1-gamma)
+        except ZeroDivisionError as e:
+            raise ValueError('Consumption cannot be zero.') from e
+
+def utility(C, gamma):
+    """ Constant Relative Risk Aversion - Utility Function
+    :param C: array or scalar, consumption
+    :param gamma: scalar, risk preference parameter
+    :return: array or scalar, utility
+    """
+    if gamma == 1:
+        return np.log(C)   # TODO: add try-except block to catch the error
+    else:
+        try:
+            return C**(1-gamma) / (1-gamma)
+        except ZeroDivisionError as e:
+            raise ValueError('Consumption cannot be zero.') from e
 
 
 def cal_income(coeffs):
@@ -51,8 +72,10 @@ def read_input_data(income_fp, mortal_fp):
 
 def adj_income_process(income, sigma_perm, sigma_tran):
     # generate random walk and normal r.v.
+    np.random.seed(0)
     rn_perm = np.random.normal(MU, sigma_perm, (N_SIM, RETIRE_AGE - START_AGE + 1))
     rand_walk = np.cumsum(rn_perm, axis=1)
+    np.random.seed(1)
     rn_tran = np.random.normal(MU, sigma_tran, (N_SIM, RETIRE_AGE - START_AGE + 1))
     inc_with_inc_risk = np.multiply(np.exp(rand_walk) * np.exp(rn_tran), income)
 
@@ -111,15 +134,23 @@ def exp_val_new(y, savings_incr, grid_w, v):
     COH[COH > grid_w[-1]] = grid_w[-1]
     COH[COH < grid_w[0]] = grid_w[0]
 
-    spline = CubicSpline(grid_w, v, bc_type='natural')  # minimum curvature in both ends
+    # # using cubic spline
+    # spline = CubicSpline(grid_w, v, bc_type='natural')  # minimum curvature in both ends
+
+    # v_w = np.zeros((N_SIM, N_C))
+    # for i in range(N_SIM):
+    #     v_w[i, :] = spline(COH[i, :])
 
     # p = mp.Pool(processes=mp.cpu_count())
     # v_w = p.apply(spline, args=(COH,))
     # p.close()
 
+    # using piecewise linear interpolation
+    linear_interp = interp1d(grid_w, v, kind='linear')
+
     v_w = np.zeros((N_SIM, N_C))
     for i in range(N_SIM):
-        v_w[i, :] = spline(COH[i, :])
+        v_w[i, :] = linear_interp(COH[i, :])
 
     ev = v_w.mean(axis=0)
     return ev[None].T

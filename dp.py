@@ -21,7 +21,7 @@ def dp_solver(Y, prob, GAMMA):
     c = np.zeros((2, N_W))
 
     # terminal period: consume all the wealth
-    ut = utility(grid_w, GAMMA)
+    ut = utility_proxy(grid_w, GAMMA)
     v[0, :] = ut
     c[0, :] = grid_w
 
@@ -40,8 +40,8 @@ def dp_solver(Y, prob, GAMMA):
         start_time = time.time()
         for i in range(N_W):
             print('wealth_grid_progress: ', i / N_W * 100)
-            consmp = np.linspace(0.1, grid_w[i], N_C)
-            u_r = utility(consmp, GAMMA)
+            consmp = np.linspace(LOWER_BOUND_C, grid_w[i], N_C)
+            u_r = utility_proxy(consmp, GAMMA)
             u_r = u_r[None].T
 
             savings = grid_w[i] - np.linspace(0, grid_w[i], N_C)
@@ -50,7 +50,7 @@ def dp_solver(Y, prob, GAMMA):
 
             expected_value = exp_val_new(Y[:, t], savings_incr, grid_w, v[0, :])
 
-            v_array = u_r + DELTA * prob[t] * expected_value    # v_array has size N_C-by-1
+            v_array = ((1 - DELTA) * u_r + DELTA * prob[t] * expected_value) ** (1 / (1 - GAMMA))    # v_array has size N_C-by-1
             v[1, i] = np.max(v_array)
             pos = np.argmax(v_array)
             c[1, i] = consmp[pos]
