@@ -125,7 +125,7 @@ def adj_income_process(income, sigma_perm, sigma_tran):
     return adj_Y
 
 
-def exp_val_new(y, savings_incr, grid_w, v):
+def exp_val_new(y, savings_incr, grid_w, v, GAMMA):
 
     COH = np.zeros((N_SIM, N_C))
     COH[:] = np.squeeze(savings_incr)
@@ -151,6 +151,8 @@ def exp_val_new(y, savings_incr, grid_w, v):
     v_w = np.zeros((N_SIM, N_C))
     for i in range(N_SIM):
         v_w[i, :] = linear_interp(COH[i, :])
+
+    v_w = v_w ** (1 - GAMMA)
 
     ev = v_w.mean(axis=0)
     return ev[None].T
