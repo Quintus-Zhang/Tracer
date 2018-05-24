@@ -39,7 +39,7 @@ def dp_solver(Y, prob, GAMMA):
         print('############ Age: ', t+START_AGE, '#############')
         start_time = time.time()
         for i in range(N_W):
-            print('wealth_grid_progress: ', i / N_W * 100)
+            # print('wealth_grid_progress: ', i / N_W * 100)
             consmp = np.linspace(LOWER_BOUND_C, grid_w[i], N_C)
             u_r = utility_proxy(consmp, GAMMA)
             u_r = u_r[None].T
