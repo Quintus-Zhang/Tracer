@@ -51,8 +51,10 @@ def read_input_data(income_fp, mortal_fp):
 
 def adj_income_process(income, sigma_perm, sigma_tran):
     # generate random walk and normal r.v.
+    np.random.seed(0)
     rn_perm = np.random.normal(MU, sigma_perm, (N_SIM, RETIRE_AGE - START_AGE + 1))
     rand_walk = np.cumsum(rn_perm, axis=1)
+    np.random.seed(1)
     rn_tran = np.random.normal(MU, sigma_tran, (N_SIM, RETIRE_AGE - START_AGE + 1))
     inc_with_inc_risk = np.multiply(np.exp(rand_walk) * np.exp(rn_tran), income)
 
