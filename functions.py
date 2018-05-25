@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from constants import *
 
+
 def utility(C, gamma):
     """ Constant Relative Risk Aversion - Utility Function
 
@@ -72,8 +73,8 @@ def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_coh, v, weig
     :param inc_with_shk_tran:
     :param exp_inc_shk_perm : array with size 3-by-1, exponentiated permanent income shock
     :param savings_incr     : array with size N_C-by-1, savings increment
-    :param grid_coh         : array with size (N_W, ), grid of cash-on-hand
-    :param v                : array with size (N_W, ), backward cumulative utility(value function)
+    :param grid_coh         : array with size (N_COH, ), grid of cash-on-hand
+    :param v                : array with size (N_COH, ), backward cumulative utility(value function)
     :param weight           : array with size 3-by-1, weight from Gaussian Quadrature
     :param age              : int, actual age
     :param flag             : string, flag var to choose adding details of ISA or Loan or nothing(just the original model)
@@ -119,8 +120,8 @@ def exp_val_r(inc, exp_inc_shk_perm, savings_incr, grid_coh, v, weight):
     :param inc             : float64, deterministic component at certain retirement age
     :param exp_inc_shk_perm: array with size 3-by-1, exponentiated permanent income shock
     :param savings_incr    : array with size N_C-by-1, savings increment
-    :param grid_coh        : array with size (N_W, ), grid of cash-on-hand
-    :param v               : array with size (N_W, ), backward cumulative utility(value function)
+    :param grid_coh        : array with size (N_COH, ), grid of cash-on-hand
+    :param v               : array with size (N_COH, ), backward cumulative utility(value function)
     :param weight          : array with size 3-by-1, weight from Gaussian Quadrature
     :return: float64, expected value of the backward cumulative utility
     """
