@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 
 start_time = time.time()
 
-# TODO: test if std of simulated utility decrease as the number of simulations increase
 ###########################################################################
 #                      Setup - file path & raw data                       #
 ###########################################################################
@@ -45,10 +44,10 @@ cond_prob = cond_prob.values
 ###########################################################################
 if run_dp:
     c_func_fp = os.path.join(base_path, 'results', 'c function_' + education_level[AltDeg] + '.xlsx')
-    # v_func_fp = os.path.join(base_path, 'results', 'v function_' + education_level[AltDeg] + '.xlsx')
+    v_func_fp = os.path.join(base_path, 'results', 'v function_' + education_level[AltDeg] + '.xlsx')
     c_func_df, v = dp_solver(income_bf_ret, income_ret, sigma_perm, sigma_tran, cond_prob, flag='orig')
     c_func_df.to_excel(c_func_fp)
-    # v.to_excel(v_func_fp)
+    v.to_excel(v_func_fp)
 else:
     c_func_fp = os.path.join(base_path, 'results', 'c function_' + education_level[AltDeg] + '.xlsx')
     c_func_df = pd.read_excel(c_func_fp)

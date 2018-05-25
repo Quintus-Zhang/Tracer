@@ -3,11 +3,6 @@ import numpy as np
 import pandas as pd
 from constants import *
 
-###########################################################################
-#                              Functions                                  #
-###########################################################################
-
-
 def utility(C, gamma):
     """ Constant Relative Risk Aversion - Utility Function
 
@@ -16,7 +11,10 @@ def utility(C, gamma):
     :return: array or scalar, utility
     """
     if gamma == 1:
-        return np.log(C)   # TODO: add try-except block to catch the error
+        try:
+            return np.log(C)
+        except ValueError:
+            raise ValueError('Consumption cannot be negative.')
     else:
         try:
             return C**(1-gamma) / (1-gamma)
@@ -28,7 +26,7 @@ def cal_income(coeffs):
     """ Calculating income over age by age polynomials
 
     :param coeffs: DataFrame, containing coefficients of the age polynomials for all 3 education groups
-    :return: array, income from age 22 to 65 for education group AltDeg
+    :return: array, income from age 22 to 65 for education group {AltDeg}
     """
     coeff_this_group = coeffs.loc[education_level[AltDeg]]
     a  = coeff_this_group['a']
@@ -61,40 +59,35 @@ def read_input_data(income_fp, mortal_fp):
     std.drop([1, 3], inplace=True)
     std.index = pd.CategoricalIndex(['sigma_permanent', 'sigma_transitory'])
 
-    cond_prob = pd.read_excel(mortal_fp)
+    cond_prob = pd.read_excel(mortal_fp)                                          # - conditional survival probability
     cond_prob.set_index('AGE', inplace=True)
 
     return age_coeff, std, cond_prob
 
 
-def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight, age, flag):
-    # ev = 0.0
-    # for j in range(3):
-    #     for k in range(3):
-    #         inc = inc_with_shk_tran[j] * exp_inc_shk_perm[k]
-    #
-    #         wealth = savings_incr + inc
-    #
-    #         wealth[wealth > grid_w[-1]] = grid_w[-1]
-    #         wealth[wealth < grid_w[0]] = grid_w[0]
-    #
-    #         spline = CubicSpline(grid_w, v, bc_type='natural')  # minimum curvature in both ends
-    #
-    #         v_w = spline(wealth)
-    #         temp = weight[j] * weight[k] * v_w
-    #         ev = ev + temp
-    # ev = ev / np.pi   # quadrature
-    # return ev
+def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_coh, v, weight, age, flag):
+    """ Calculate the expected value of the backward cumulative utility within the working period using Gaussian
+    Quadrature and Cubic Spline Interpolation
 
+    :param inc_with_shk_tran:
+    :param exp_inc_shk_perm : array with size 3-by-1, exponentiated permanent income shock
+    :param savings_incr     : array with size N_C-by-1, savings increment
+    :param grid_coh         : array with size (N_W, ), grid of cash-on-hand
+    :param v                : array with size (N_W, ), backward cumulative utility(value function)
+    :param weight           : array with size 3-by-1, weight from Gaussian Quadrature
+    :param age              : int, actual age
+    :param flag             : string, flag var to choose adding details of ISA or Loan or nothing(just the original model)
+    :return: float64, expected value of the backward cumulative utility
+    """
     ev_list = []
     for unemp_flag in [True, False]:
         ev = 0.0
         for j in range(3):
             for k in range(3):
                 inc = inc_with_shk_tran[j] * exp_inc_shk_perm[k]
-                inc = inc * unemp_frac[AltDeg] if unemp_flag else inc         # theta
+                inc = inc * unemp_frac[AltDeg] if unemp_flag else inc    # unemployment risk
 
-                # MARK: ISA
+                # MARK: ISA / Loan
                 if age < START_AGE + TERM:
                     if flag == 'rho':
                         inc *= rho
@@ -103,49 +96,45 @@ def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_w, v, weight
                     else:
                         pass
 
-                wealth = savings_incr + inc
+                coh = savings_incr + inc
 
-                wealth[wealth > grid_w[-1]] = grid_w[-1]
-                wealth[wealth < grid_w[0]] = grid_w[0]
+                coh[coh > grid_coh[-1]] = grid_coh[-1]  # If coh go across the boundary, then we set it to the boundary value.
+                coh[coh < grid_coh[0]] = grid_coh[0]    # This makes sure that extrapolation won't happen here.
 
-                spline = CubicSpline(grid_w, v, bc_type='natural')  # minimum curvature in both ends
+                spline = CubicSpline(grid_coh, v, bc_type='natural')  # 'natural' requires minimum curvature in the both ends
 
-                v_w = spline(wealth)
-                temp = weight[j] * weight[k] * v_w
+                v_coh = spline(coh)
+                temp = weight[j] * weight[k] * v_coh
                 ev = ev + temp
-        ev = ev / np.pi   # quadrature
+        ev = ev / np.pi     # quadrature
         ev_list.append(ev)
-    ev_all_include = unempl_rate[AltDeg] * ev_list[0] + (1 - unempl_rate[AltDeg]) * ev_list[1]      # include income risks and unemployment risk
+    ev_all_include = unempl_rate[AltDeg] * ev_list[0] + (1 - unempl_rate[AltDeg]) * ev_list[1]  # include the unemployment risk
     return ev_all_include
 
 
-def exp_val_r(inc, exp_inc_shk_perm, savings_incr, grid_w, v, weight):
+def exp_val_r(inc, exp_inc_shk_perm, savings_incr, grid_coh, v, weight):
+    """ Calculate the expected value of the backward cumulative utility within the retirement period using Gaussian
+    Quadrature and Cubic Spline Interpolation
+
+    :param inc             : float64, deterministic component at certain retirement age
+    :param exp_inc_shk_perm: array with size 3-by-1, exponentiated permanent income shock
+    :param savings_incr    : array with size N_C-by-1, savings increment
+    :param grid_coh        : array with size (N_W, ), grid of cash-on-hand
+    :param v               : array with size (N_W, ), backward cumulative utility(value function)
+    :param weight          : array with size 3-by-1, weight from Gaussian Quadrature
+    :return: float64, expected value of the backward cumulative utility
+    """
     ev = 0.0
     for k in range(3):
-        wealth = savings_incr + inc * exp_inc_shk_perm[k] * ret_frac[AltDeg]
+        coh = savings_incr + inc * exp_inc_shk_perm[k] * ret_frac[AltDeg]  # cash-on-hand cumulation equation
 
-        wealth[wealth > grid_w[-1]] = grid_w[-1]
-        wealth[wealth < grid_w[0]] = grid_w[0]
+        coh[coh > grid_coh[-1]] = grid_coh[-1]  # If coh go across the boundary, then we set it to the boundary value.
+        coh[coh < grid_coh[0]] = grid_coh[0]    # This makes sure that extrapolation won't happen here.
 
-        spline = CubicSpline(grid_w, v, bc_type='natural')
+        spline = CubicSpline(grid_coh, v, bc_type='natural')  # Interpolation
+        v_coh = spline(coh)
 
-        v_w = spline(wealth)
-        temp = weight[k] * v_w
+        temp = weight[k] * v_coh
         ev = ev + temp
     ev = ev / np.sqrt(np.pi)
     return ev
-
-
-# def exp_val_r(inc, savings_incr, grid_w, v):
-#     wealth = savings_incr + inc
-#
-#     wealth[wealth > grid_w[-1]] = grid_w[-1]
-#     wealth[wealth < grid_w[0]] = grid_w[0]
-#
-#     spline = CubicSpline(grid_w, v, bc_type='natural')
-#
-#     v_w = spline(wealth)
-#
-#     ev = v_w
-#     return ev
-
