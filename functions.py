@@ -48,7 +48,7 @@ def read_input_data(income_fp, mortal_fp):
     :param mortal_fp: file path of the survival prob data
     :return:
         age_coeff: DataFrame, containing coefficients of the age polynomials for all 3 education groups
-        std      : DataFrame, two groups of income shocks
+        std: DataFrame, two groups of income shocks
         cond_prob: DataFrame, conditional survival prob from age 21 to 100
     """
     age_coeff_and_var = pd.ExcelFile(income_fp)
@@ -70,14 +70,14 @@ def exp_val(inc_with_shk_tran, exp_inc_shk_perm, savings_incr, grid_coh, v, weig
     """ Calculate the expected value of the backward cumulative utility within the working period using Gaussian
     Quadrature and Cubic Spline Interpolation
 
-    :param inc_with_shk_tran:
-    :param exp_inc_shk_perm : array with size 3-by-1, exponentiated permanent income shock
-    :param savings_incr     : array with size N_C-by-1, savings increment
-    :param grid_coh         : array with size (N_COH, ), grid of cash-on-hand
-    :param v                : array with size (N_COH, ), backward cumulative utility(value function)
-    :param weight           : array with size 3-by-1, weight from Gaussian Quadrature
-    :param age              : int, actual age
-    :param flag             : string, flag var to choose adding details of ISA or Loan or nothing(just the original model)
+    :param inc_with_shk_tran: array with size 3-by-1, income with transitory shock
+    :param exp_inc_shk_perm: array with size 3-by-1, exponentiated permanent income shock
+    :param savings_incr: array with size N_C-by-1, savings increment
+    :param grid_coh: array with size (N_COH, ), grid of cash-on-hand
+    :param v: array with size (N_COH, ), backward cumulative utility(value function)
+    :param weight: array with size 3-by-1, weight from Gaussian Quadrature
+    :param age: int, actual age
+    :param flag: string, flag var to choose adding details of ISA or Loan or nothing(just the original model)
     :return: float64, expected value of the backward cumulative utility
     """
     ev_list = []
@@ -117,12 +117,12 @@ def exp_val_r(inc, exp_inc_shk_perm, savings_incr, grid_coh, v, weight):
     """ Calculate the expected value of the backward cumulative utility within the retirement period using Gaussian
     Quadrature and Cubic Spline Interpolation
 
-    :param inc             : float64, deterministic component at certain retirement age
+    :param inc: float64, deterministic component at certain retirement age
     :param exp_inc_shk_perm: array with size 3-by-1, exponentiated permanent income shock
-    :param savings_incr    : array with size N_C-by-1, savings increment
-    :param grid_coh        : array with size (N_COH, ), grid of cash-on-hand
-    :param v               : array with size (N_COH, ), backward cumulative utility(value function)
-    :param weight          : array with size 3-by-1, weight from Gaussian Quadrature
+    :param savings_incr: array with size N_C-by-1, savings increment
+    :param grid_coh: array with size (N_COH, ), grid of cash-on-hand
+    :param v: array with size (N_COH, ), backward cumulative utility(value function)
+    :param weight: array with size 3-by-1, weight from Gaussian Quadrature
     :return: float64, expected value of the backward cumulative utility
     """
     ev = 0.0

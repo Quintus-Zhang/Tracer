@@ -33,14 +33,14 @@ def c_func(c_df, COH, age):
 def generate_consumption_process(income_bf_ret, sigma_perm_shock, sigma_tran_shock, c_func_df, *, flag='orig'):
     """ Simulate the consumption process and income process
 
-    :param income_bf_ret   : array with size of (44,), deterministic component of income over the working period
+    :param income_bf_ret: array with size of (44,), deterministic component of income over the working period
     :param sigma_perm_shock: float64, standard deviation of the permanent shock in the log term
     :param sigma_tran_shock: float64, standard deviation of the transitory shock in the log term
-    :param c_func_df       : DataFrame, consumption functions from age 100 to 22
-    :param flag            : string, flag var to choose adding details of ISA or Loan or nothing(just the original model)
+    :param c_func_df: DataFrame, consumption functions from age 100 to 22
+    :param flag: string, flag var to choose adding details of ISA or Loan or nothing(just the original model)
     :return:
-           c               : array with size of N_SIM-by-79, consumption process
-           inc             : array with size of N_SIM-by-79, income process
+           c: array with size of N_SIM-by-79, consumption process
+           inc: array with size of N_SIM-by-79, income process
     """
 
     YEARS = END_AGE - START_AGE + 1
@@ -110,7 +110,7 @@ def cal_certainty_equi(prob, c):
     """ Calculate consumption CE and wealth CE
 
     :param prob: array with size of (78,), conditional survival probability
-    :param c   : array with size of , consumption process
+    :param c: array with size of , consumption process
     :return:
            c_ce: float64, consumption CE
            total_w_ce: float64, total wealth CE

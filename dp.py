@@ -7,15 +7,15 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, *, f
     """ Solve for the policy rules (a.k.a consumption functions) using the backward induction method from the
     perspective of Dynamic Programming
 
-    :param income          : array with size of (44,), deterministic component income over the working period
-    :param income_ret      : float64, income at the last working period
+    :param income: array with size of (44,), deterministic component income over the working period
+    :param income_ret: float64, income at the last working period
     :param sigma_perm_shock: float64, standard deviation of the permanent shock in the log term
     :param sigma_tran_shock: float64, standard deviation of the transitory shock in the log term
-    :param prob            : array with size of (78,), conditional survival probability
-    :param flag            : string, flag var to choose adding details of ISA or Loan or nothing(just the original model)
+    :param prob: array with size of (78,), conditional survival probability
+    :param flag: string, flag var to choose adding details of ISA or Loan or nothing(just the original model)
     :return:
-           c_collection    : DataFrame, consumption functions from age 100 to 22
-           v_collection    : DataFrame, value functions from age 100 to 22
+           c_collection: DataFrame, consumption functions from age 100 to 22
+           v_collection: DataFrame, value functions from age 100 to 22
     """
     ###########################################################################
     #                                Setup                                    #
