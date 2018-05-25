@@ -21,37 +21,36 @@ AltDeg = 4                  # education level identifier
 flag = 'orig'               # flag var, 'orig' or 'rho' or 'ppt'
 run_dp = True               # Bool, run the dp_solver or not
 
-#
+# Dict - education group
 education_level = {
     1: 'No High School',
     2: 'High School Graduates',
     4: 'College Graduates'
 }
 
-# replacement rate of retirement earnings (lambda)
+# Dict - replacement rate of retirement earnings (lambda)
 ret_frac = {
     1: 0.6005,
     2: 0.5788,
     4: 0.4516,
 }
 
-# replacement rate of unemployment earnings (theta)
+# Dict - replacement rate of unemployment earnings (theta)
 unemp_frac = {
     1: 0.7891,
     2: 0.7017,
-    4: 0.5260 # 1-10**(-5),  # 0.5260,
+    4: 0.5260
 }
 
-# probability of suffering an unemployed spell (pi)
+# Dict - probability of suffering an unemployed spell (pi)
 unempl_rate = {
     1: 0.2024,
     2: 0.1438,
-    4: 0.0738 # 10**(-5),  # 0.0738,
+    4: 0.0738
 }
 
-# rho
-rho = 0.900796641891997  # rho = 0.931001221
-TERM = 10
 
-# ppt
-ppt = 3483.25  # 10031.76 #
+rho = 0.900796641891997  # replacement rate of ISA
+TERM = 10                # term of ISA
+
+ppt = 3483.25            # repayment amount of loan
