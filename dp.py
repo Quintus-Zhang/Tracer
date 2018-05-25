@@ -58,7 +58,7 @@ def dp_solver(income, income_ret, sigma_perm_shock, sigma_tran_shock, prob, *, f
         for i in range(N_COH):
 
             # Grid Search: for each coh in the grid_coh, we search for the consumption which maximizes the v
-            consmp = np.linspace(0, grid_coh[i], N_C)
+            consmp = np.linspace(LOWER_BOUND_C, grid_coh[i], N_C)
             u_r = utility(consmp, GAMMA)
             u_r = u_r[None].T
 

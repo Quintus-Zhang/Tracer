@@ -24,9 +24,10 @@ mortal_fp = os.path.join(base_path, 'data', surviv_fn)
 age_coeff, std, surv_prob = read_input_data(income_fp, mortal_fp)
 
 
-###########################################################################
-#              Setup - income process & std & survival prob               #
-###########################################################################
+##########################################################################################
+#  Setup - deterministic component of income & income shocks & conditional survival prob #
+##########################################################################################
+# get deterministic component of income
 income_bf_ret = cal_income(age_coeff)
 income_ret = income_bf_ret[-1]
 
@@ -56,16 +57,7 @@ else:
 ###########################################################################
 #        CE - calculate consumption process & certainty equivalent        #
 ###########################################################################
-# c_proc_fp = os.path.join(base_path, 'results', 'c process_' + education_level[AltDeg] + '.xlsx')
-# inc_proc_fp = os.path.join(base_path, 'results', 'inc process_' + education_level[AltDeg] + '.xlsx')
-
-c_proc, inc = generate_consumption_process(income_bf_ret, sigma_perm, sigma_tran, c_func_df, flag='oirg')
-
-# c_proc = pd.DataFrame(c_proc)
-# c_proc.to_excel(c_proc_fp, index=False)
-
-# inc = pd.DataFrame(inc)
-# inc.to_excel(inc_proc_fp, index=False)
+c_proc, _ = generate_consumption_process(income_bf_ret, sigma_perm, sigma_tran, c_func_df, flag='oirg')
 
 cond_prob = surv_prob.loc[START_AGE:END_AGE, 'CSP']
 prob = cond_prob.cumprod().values
@@ -87,4 +79,3 @@ print('Gamma: ', GAMMA)
 print('rho: ', rho)
 print('term: ', TERM)
 print('ppt: ', ppt)
-
