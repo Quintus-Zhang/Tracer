@@ -29,18 +29,13 @@ def run_model(gamma):
     ###########################################################################
     #        CE - calculate consumption process & certainty equivalent        #
     ###########################################################################
-    c_ce_arr = np.zeros(N)
-    for i in range(N):
-        c_proc, _ = generate_consumption_process(income_bf_ret, sigma_perm, sigma_tran, c_func_df)
+    c_proc, _ = generate_consumption_process(income_bf_ret, sigma_perm, sigma_tran, c_func_df)
 
-        prob = surv_prob.loc[START_AGE:END_AGE, 'CSP'].cumprod().values
-
-        c_ce, _ = cal_certainty_equi(prob, c_proc, gamma)
-        c_ce_arr[i] = c_ce
+    prob = surv_prob.loc[START_AGE:END_AGE, 'CSP'].cumprod().values
+    c_ce, _ = cal_certainty_equi(prob, c_proc, gamma)
 
     print(f"------ {time.time() - start} seconds ------")
-    print(c_ce_arr.mean())
-    return TERM, rho, gamma, c_ce_arr.mean()
+    return TERM, rho, gamma, c_ce
 
 
 start_time = time.time()
