@@ -34,8 +34,10 @@ def generate_consumption_process(income_bf_ret, sigma_perm_shock, sigma_tran_sho
     ###########################################################################
     # add income risks - generate the random walk and normal r.v.
     # - before retirement
+    np.random.seed(0)
     rn_perm = np.random.normal(MU, sigma_perm_shock, (N_SIM, RETIRE_AGE - START_AGE + 1))
     rand_walk = np.cumsum(rn_perm, axis=1)
+    np.random.seed(1)
     rn_tran = np.random.normal(MU, sigma_tran_shock, (N_SIM, RETIRE_AGE - START_AGE + 1))
     inc_with_inc_risk = np.multiply(np.exp(rand_walk) * np.exp(rn_tran), income_bf_ret)
 
