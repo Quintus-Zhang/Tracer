@@ -25,25 +25,26 @@ References
 - `hermgauss`_
 
 
-Branches
-========
-You can find all the branches from my `github`_.
-Following branches using the Gaussian Quadrature method:
-- master
-- ISA_loop_on_gamma
-- ISA_loop_on_term_rho_and_gamma
-- BSL_loop_on_gamma
+Branches using Gaussian Quadrature method
+=========================================
+- `master`_
+- `ISA_loop_on_gamma`_
+- `ISA_loop_on_term_rho_and_gamma`_
+- `BSL_loop_on_gamma`_
 
-Following branches using the Monte Carlo Simulation method:
-- MC
-- MC_UFT
-- DEBT_loop_on_gamma
-- DEBT_loop_on_gamma_UFT
-- DEBT_loop_on_principal
+Branches using Monte Carlo Simulation method
+============================================
+- `MC`_
+- `MC_UFT`_
+- `DEBT_loop_on_gamma`_
+- `DEBT_loop_on_gamma_UFT`_
+- `DEBT_loop_on_principal`_
 
-Two State Variables Trial:
-- debt_in_DP
-- debt_in_DP_1
+Branches - Two State Variables Trial:
+=====================================
+- `debt_in_DP`_
+- `debt_in_DP_1`_
+
 
 .. _hermgauss: https://docs.scipy.org/doc/numpy-1.13.0/reference/generated/numpy.polynomial.hermite.hermgauss.html
 .. _GQ Wikipedia: https://en.wikipedia.org/wiki/Gauss–Hermite_quadrature
@@ -52,3 +53,14 @@ Two State Variables Trial:
 .. _Conditional Survival Prob Feb 16.xlsx: https://drive.google.com/open?id=1ios2CFwfhzuYSnnKfTFt13PuMdDhM18o
 .. _results(CE, c funcs, v funcs): https://drive.google.com/open?id=12KybdhFc6S2d8u6D0oT0Lmmvk8SG-ep9
 .. _github: https://github.com/Quintus-Zhang/Tracer/branches/all
+.. _master: https://github.com/Quintus-Zhang/Tracer/branches/all
+.. _ISA_loop_on_gamma: https://github.com/Quintus-Zhang/Tracer/branches/all
+.. _ISA_loop_on_term_rho_and_gamma: https://github.com/Quintus-Zhang/Tracer/branches/all
+.. _BSL_loop_on_gamma: https://github.com/Quintus-Zhang/Tracer/branches/all
+.. _MC: https://github.com/Quintus-Zhang/Tracer/branches/all
+.. _MC_UFT: https://github.com/Quintus-Zhang/Tracer/branches/all
+.. _DEBT_loop_on_gamma: https://github.com/Quintus-Zhang/Tracer/branches/all
+.. _DEBT_loop_on_gamma_UFT: https://github.com/Quintus-Zhang/Tracer/branches/all
+.. _DEBT_loop_on_principal: https://github.com/Quintus-Zhang/Tracer/branches/all
+.. _debt_in_DP: https://github.com/Quintus-Zhang/Tracer/branches/all
+.. _debt_in_DP_1: https://github.com/Quintus-Zhang/Tracer/branches/all
