@@ -49,7 +49,7 @@ def read_input_data(income_fp, mortal_fp):
     return age_coeff, std, cond_prob
 
 
-def adj_income_process(income, sigma_perm, sigma_tran):
+def adj_income_process(income, sigma_perm, sigma_tran, INIT_DEBT, P_BAR):
     # generate random walk and normal r.v.
     np.random.seed(0)
     rn_perm = np.random.normal(MU, sigma_perm, (N_SIM, RETIRE_AGE - START_AGE + 1))

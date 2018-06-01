@@ -7,7 +7,7 @@ from functions import *
 from constants import *
 
 
-def dp_solver(Y, prob, GAMMA):
+def dp_solver(Y, prob):
     ###########################################################################
     #                                Setup                                    #
     ###########################################################################

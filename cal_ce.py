@@ -54,7 +54,7 @@ def generate_consumption_process(inc, c_func_df):
     return c, inc
 
 
-def cal_certainty_equi(prob, c, GAMMA):
+def cal_certainty_equi(prob, c):
 
     # discount factor
     YEARS = END_AGE - START_AGE + 1

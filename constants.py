@@ -10,7 +10,7 @@ UPPER_BOUND_W = 15000000    # upper bound of wealth
 EXPAND_FAC = 3
 N_C = 1501
 LOWER_BOUND_C = 0
-# GAMMA = 2                 # risk preference parameter
+GAMMA = 2                 # risk preference parameter
 R = 0.02                  # risk-free rate
 DELTA = 0.99              # discount factor
 MU = 0                    # expectation of income shocks
@@ -18,7 +18,6 @@ N_SIM = 10000            # number of draws
 INIT_WEALTH = 0
 
 AltDeg = 4
-# flag = 'orig'  #, 'orig' 'rho'  # 'ppt'
 run_dp = True
 
 education_level = {
@@ -53,6 +52,4 @@ rho = 0.900796641891997
 TERM = 10
 
 # ppt
-P_BAR = 3483.25
-INIT_DEBT = 25000
 rate = 0.07
