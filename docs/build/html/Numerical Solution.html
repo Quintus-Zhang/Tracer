@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Numerical Solution &#8212; Tracer 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Tracer 0.1 documentation" href="index.html" />
+    <link rel="next" title="Program Documentation" href="Program.html" />
+    <link rel="prev" title="Dynamic Programming Problem" href="Model Description.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="numerical-solution">
+<h1>Numerical Solution<a class="headerlink" href="#numerical-solution" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="backward-induction-method">
+<h2>Backward Induction Method<a class="headerlink" href="#backward-induction-method" title="Permalink to this headline">¶</a></h2>
+<p>The idea of backward induction is to solve the problem from the end and working
+backwards towards the initial period. Steps of the method are as follows:</p>
+<blockquote>
+<div><ol class="arabic">
+<li><p class="first">Determine the value function for <span class="math">\(V_T(COH_T)\)</span> for all <span class="math">\(COH_T\)</span></p>
+</li>
+<li><p class="first">Start from <span class="math">\(t=T-1\)</span>, we discretize the state space for the <span class="math">\(COH_t\)</span> and
+<span class="math">\(C_t\)</span>, solve a one-step optimization problem using grid search, that is, for
+every <span class="math">\(COH_{t}\)</span> and <span class="math">\(C_{t}\)</span>, evaluate the value function, and then choose
+for every <span class="math">\(COH_{t}\)</span></p>
+<div class="math">
+\[C_{t}^{*}(COH_t) = argmax_{C_t\ge 0} [U(C_t) + \beta p_tE_t(V_{t+1}(R(COH_{t}-C_{t})+Y_{t+1}))]\]</div>
+</li>
+<li><p class="first">If <span class="math">\(t \gt 0\)</span>, <span class="math">\(t = t - 1\)</span>, and go back to step 2, otherwise stop.</p>
+</li>
+</ol>
+</div></blockquote>
+</div>
+<div class="section" id="cubic-spline">
+<h2>Cubic Spline<a class="headerlink" href="#cubic-spline" title="Permalink to this headline">¶</a></h2>
+<p>In a continuous state model, the value function is infinite-dimensional, and we must
+devise a grid in the state space. When <span class="math">\(COH_t\)</span> does not lie in the chosen grid, we can
+approximate value function using interpolation method such as cubic spline.</p>
+</div>
+<div class="section" id="gauss-hermite-quadrature">
+<h2>Gauss-Hermite Quadrature<a class="headerlink" href="#gauss-hermite-quadrature" title="Permalink to this headline">¶</a></h2>
+<p>The Gauss-Hermite Quadrature approximates the value of integrals of the following kind:</p>
+<div class="math">
+\[\int_{+\infty}^{-\infty} e^{-x^2}f(x)dx \approx \sum_{i=1}^n w_if(x_i)\]</div>
+<p>Integral such as the left-hand side can be derived from the expectation, because the random
+variable <span class="math">\(Y_{t+1}\)</span> follows the normal distribution.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Numerical Solution</a><ul>
+<li><a class="reference internal" href="#backward-induction-method">Backward Induction Method</a></li>
+<li><a class="reference internal" href="#cubic-spline">Cubic Spline</a></li>
+<li><a class="reference internal" href="#gauss-hermite-quadrature">Gauss-Hermite Quadrature</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="Model Description.html" title="previous chapter">Dynamic Programming Problem</a></li>
+      <li>Next: <a href="Program.html" title="next chapter">Program Documentation</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Numerical Solution.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Quancheng.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/Numerical Solution.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

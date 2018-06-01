@@ -1,0 +1,330 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Program Documentation &#8212; Tracer 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Tracer 0.1 documentation" href="index.html" />
+    <link rel="next" title="Useful Links" href="Useful Links.html" />
+    <link rel="prev" title="Numerical Solution" href="Numerical Solution.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="program-documentation">
+<h1>Program Documentation<a class="headerlink" href="#program-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-functions">
+<span id="functions-module"></span><h2>functions module<a class="headerlink" href="#module-functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="functions.cal_income">
+<code class="descclassname">functions.</code><code class="descname">cal_income</code><span class="sig-paren">(</span><em>coeffs</em><span class="sig-paren">)</span><a class="headerlink" href="#functions.cal_income" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculating income over age by age polynomials</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>coeffs</strong> &#8211; DataFrame, containing coefficients of the age polynomials for all 3 education groups</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">array, income from age 22 to 65 for education group {AltDeg}</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="functions.exp_val">
+<code class="descclassname">functions.</code><code class="descname">exp_val</code><span class="sig-paren">(</span><em>inc_with_shk_tran</em>, <em>exp_inc_shk_perm</em>, <em>savings_incr</em>, <em>grid_coh</em>, <em>v</em>, <em>weight</em>, <em>age</em>, <em>flag</em><span class="sig-paren">)</span><a class="headerlink" href="#functions.exp_val" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the expected value of the backward cumulative utility within the working period using Gaussian
+Quadrature and Cubic Spline Interpolation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>inc_with_shk_tran</strong> &#8211; array with size 3-by-1, income with transitory shock</li>
+<li><strong>exp_inc_shk_perm</strong> &#8211; array with size 3-by-1, exponentiated permanent income shock</li>
+<li><strong>savings_incr</strong> &#8211; array with size N_C-by-1, savings increment</li>
+<li><strong>grid_coh</strong> &#8211; array with size (N_COH, ), grid of cash-on-hand</li>
+<li><strong>v</strong> &#8211; array with size (N_COH, ), backward cumulative utility(value function)</li>
+<li><strong>weight</strong> &#8211; array with size 3-by-1, weight from Gaussian Quadrature</li>
+<li><strong>age</strong> &#8211; int, actual age</li>
+<li><strong>flag</strong> &#8211; string, flag var to choose adding details of ISA or Loan or nothing(just the original model)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">float64, expected value of the backward cumulative utility</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="functions.exp_val_r">
+<code class="descclassname">functions.</code><code class="descname">exp_val_r</code><span class="sig-paren">(</span><em>inc</em>, <em>exp_inc_shk_perm</em>, <em>savings_incr</em>, <em>grid_coh</em>, <em>v</em>, <em>weight</em><span class="sig-paren">)</span><a class="headerlink" href="#functions.exp_val_r" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the expected value of the backward cumulative utility within the retirement period using Gaussian
+Quadrature and Cubic Spline Interpolation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>inc</strong> &#8211; float64, deterministic component at certain retirement age</li>
+<li><strong>exp_inc_shk_perm</strong> &#8211; array with size 3-by-1, exponentiated permanent income shock</li>
+<li><strong>savings_incr</strong> &#8211; array with size N_C-by-1, savings increment</li>
+<li><strong>grid_coh</strong> &#8211; array with size (N_COH, ), grid of cash-on-hand</li>
+<li><strong>v</strong> &#8211; array with size (N_COH, ), backward cumulative utility(value function)</li>
+<li><strong>weight</strong> &#8211; array with size 3-by-1, weight from Gaussian Quadrature</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">float64, expected value of the backward cumulative utility</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="functions.read_input_data">
+<code class="descclassname">functions.</code><code class="descname">read_input_data</code><span class="sig-paren">(</span><em>income_fp</em>, <em>mortal_fp</em><span class="sig-paren">)</span><a class="headerlink" href="#functions.read_input_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read data - Income(coefficients of age polynomials), Income Shocks(std), Survival Probability(conditional prob)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>income_fp</strong> &#8211; file path of the income data</li>
+<li><strong>mortal_fp</strong> &#8211; file path of the survival prob data</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">age_coeff: DataFrame, containing coefficients of the age polynomials for all 3 education groups
+std: DataFrame, two groups of income shocks
+cond_prob: DataFrame, conditional survival prob from age 21 to 100</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="functions.utility">
+<code class="descclassname">functions.</code><code class="descname">utility</code><span class="sig-paren">(</span><em>C</em>, <em>gamma</em><span class="sig-paren">)</span><a class="headerlink" href="#functions.utility" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constant Relative Risk Aversion - Utility Function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>C</strong> &#8211; array or scalar, consumption</li>
+<li><strong>gamma</strong> &#8211; scalar, risk preference parameter</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">array or scalar, utility</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-dp">
+<span id="dp-module"></span><h2>dp module<a class="headerlink" href="#module-dp" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="dp.dp_solver">
+<code class="descclassname">dp.</code><code class="descname">dp_solver</code><span class="sig-paren">(</span><em>income</em>, <em>income_ret</em>, <em>sigma_perm_shock</em>, <em>sigma_tran_shock</em>, <em>prob</em>, <em>*</em>, <em>flag='orig'</em><span class="sig-paren">)</span><a class="headerlink" href="#dp.dp_solver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve for the policy rules (a.k.a consumption functions) using the backward induction method from the
+perspective of Dynamic Programming</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>income</strong> &#8211; array with size of (44,), deterministic component income over the working period</li>
+<li><strong>income_ret</strong> &#8211; float64, income at the last working period</li>
+<li><strong>sigma_perm_shock</strong> &#8211; float64, standard deviation of the permanent shock in the log term</li>
+<li><strong>sigma_tran_shock</strong> &#8211; float64, standard deviation of the transitory shock in the log term</li>
+<li><strong>prob</strong> &#8211; array with size of (78,), conditional survival probability</li>
+<li><strong>flag</strong> &#8211; string, flag var to choose adding details of ISA or Loan or nothing(just the original model)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">c_collection: DataFrame, consumption functions from age 100 to 22
+v_collection: DataFrame, value functions from age 100 to 22</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cal_ce">
+<span id="cal-ce-module"></span><h2>cal_ce module<a class="headerlink" href="#module-cal_ce" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="cal_ce.c_func">
+<code class="descclassname">cal_ce.</code><code class="descname">c_func</code><span class="sig-paren">(</span><em>c_df</em>, <em>COH</em>, <em>age</em><span class="sig-paren">)</span><a class="headerlink" href="#cal_ce.c_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the consumption functions and cash-on-hand at certain age, calculate the corresponding consumption using
+the cubic spline interpolation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>c_df</strong> &#8211; DataFrame, consumption functions from age 100 to 22</li>
+<li><strong>COH</strong> &#8211; array, cash-on-hand in every possible scenario</li>
+<li><strong>age</strong> &#8211; scalar</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">array with same size as COH, consumption</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cal_ce.cal_certainty_equi">
+<code class="descclassname">cal_ce.</code><code class="descname">cal_certainty_equi</code><span class="sig-paren">(</span><em>prob</em>, <em>c</em><span class="sig-paren">)</span><a class="headerlink" href="#cal_ce.cal_certainty_equi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate consumption CE and wealth CE</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>prob</strong> &#8211; array with size of (78,), conditional survival probability</li>
+<li><strong>c</strong> &#8211; array with size of , consumption process</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">c_ce: float64, consumption CE
+total_w_ce: float64, total wealth CE</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cal_ce.generate_consumption_process">
+<code class="descclassname">cal_ce.</code><code class="descname">generate_consumption_process</code><span class="sig-paren">(</span><em>income_bf_ret</em>, <em>sigma_perm_shock</em>, <em>sigma_tran_shock</em>, <em>c_func_df</em>, <em>*</em>, <em>flag='orig'</em><span class="sig-paren">)</span><a class="headerlink" href="#cal_ce.generate_consumption_process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate the consumption process and income process</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>income_bf_ret</strong> &#8211; array with size of (44,), deterministic component of income over the working period</li>
+<li><strong>sigma_perm_shock</strong> &#8211; float64, standard deviation of the permanent shock in the log term</li>
+<li><strong>sigma_tran_shock</strong> &#8211; float64, standard deviation of the transitory shock in the log term</li>
+<li><strong>c_func_df</strong> &#8211; DataFrame, consumption functions from age 100 to 22</li>
+<li><strong>flag</strong> &#8211; string, flag var to choose adding details of ISA or Loan or nothing(just the original model)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">c: array with size of N_SIM-by-79, consumption process
+inc: array with size of N_SIM-by-79, income process</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Program Documentation</a><ul>
+<li><a class="reference internal" href="#module-functions">functions module</a></li>
+<li><a class="reference internal" href="#module-dp">dp module</a></li>
+<li><a class="reference internal" href="#module-cal_ce">cal_ce module</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="Numerical Solution.html" title="previous chapter">Numerical Solution</a></li>
+      <li>Next: <a href="Useful Links.html" title="next chapter">Useful Links</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Program.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Quancheng.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/Program.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
